@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机旅程</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container welcome-screen">
+        <h1 class="pixel-text">
+            <span class="pixel-icon">🔥</span> 流浪火机旅程记录
+        </h1>
+        
+        <div class="lighter-number-display">
+            NO.<span id="currentNumber"></span> 号浪子火机
+        </div>
+        
+        <div class="usage-count">
+            你是这个火机第 <span id="userCount">0</span> 主人
+        </div>
+        
+        <p class="pixel-text">
+            沈序桦导演蓄意丢失了25个Lighter<br>
+            每个打火机都在记录着不同的故事<br>
+            现在，轮到你来续写这段旅程了！
+        </p>
+        
+        <button class="start-button pixel-text" onclick="location.href='/form?number=' + lighterNumber">
+            📝 留下我的故事
+        </button>
+    </div>
+    
+    <script>
+        // 从URL获取打火机编号
+        const urlParams = new URLSearchParams(window.location.search);
+        const lighterNumber = urlParams.get('number');
+        
+        if (!lighterNumber) {
+            // 如果没有编号参数，显示错误信息
+            document.querySelector('.welcome-screen').innerHTML = `
+                <h1 class="pixel-text">
+                    <span class="pixel-icon">⚠️</span> 访问错误
+                </h1>
+                <p class="pixel-text">
+                    请通过打火机上的二维码访问本页面
+                </p>
+            `;
+        } else {
+            document.getElementById('currentNumber').textContent = lighterNumber;
+            
+            // 获取使用次数
+            fetch(`/api/usage-count/${lighterNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('userCount').textContent = data.count;
+                });
+        }
+    </script>
+</body>
+</html> 

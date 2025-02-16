@@ -1,0 +1,435 @@
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: #081f0f; /* 深绿色背景 */
+    color: #9bbc0f; /* 经典GBA文字颜色 */
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(90deg, #0f380f 2px, transparent 2px) 0 0,
+        linear-gradient(0deg, #0f380f 2px, transparent 2px) 0 0;
+    background-size: 16px 16px;
+    opacity: 0.2;
+    pointer-events: none;
+    animation: gridScroll 20s linear infinite;
+}
+
+@keyframes gridScroll {
+    from { transform: translateY(0); }
+    to { transform: translateY(16px); }
+}
+
+.container {
+    background: #306230; /* GBA深绿色 */
+    border: 4px solid #0f380f;
+    box-shadow: 
+        0 0 0 4px #306230,
+        inset 0 0 20px rgba(15, 56, 15, 0.5);
+    padding: 24px;
+    margin: 32px auto;
+    max-width: 480px;
+    position: relative;
+}
+
+h1, h2 {
+    color: #9bbc0f;
+    text-align: center;
+    text-shadow: 2px 2px #0f380f;
+    margin-bottom: 32px;
+    font-size: 16px;
+    position: relative;
+}
+
+h1 i {
+    margin-right: 8px;
+    color: rgba(59, 130, 246, 0.8);
+}
+
+.form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.form-group label {
+    color: #9bbc0f;
+    font-size: 12px;
+    margin-bottom: 8px;
+    display: block;
+    text-shadow: 1px 1px #0f380f;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+label i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+/* 输入框样式 */
+input[type="number"],
+input[type="text"],
+textarea {
+    background: #9bbc0f;
+    border: 2px solid #0f380f;
+    color: #0f380f;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    text-shadow: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* 输入框聚焦样式 */
+input[type="number"]:focus,
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    background: #8bac0f; /* 稍微暗一点的绿色 */
+    border-color: #0f380f;
+    box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.3);
+}
+
+/* 输入框填写时的样式 */
+input[type="number"]:not(:placeholder-shown),
+input[type="text"]:not(:placeholder-shown),
+textarea:not(:placeholder-shown) {
+    background: #9bbc0f;
+    box-shadow: 0 0 8px rgba(155, 188, 15, 0.3);
+}
+
+button {
+    background: #0f380f;
+    border: none;
+    box-shadow: 4px 4px 0 #081f0f;
+    color: #9bbc0f;
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 24px;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+button:hover {
+    background: #306230;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* 提交按钮加载动画 */
+button.loading {
+    position: relative;
+    color: transparent;
+}
+
+button.loading::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #9bbc0f;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.alert {
+    background: #306230;
+    border: 2px solid #0f380f;
+    color: #9bbc0f;
+    margin-bottom: 16px;
+    animation: none;
+}
+
+.alert i {
+    margin-right: 12px;
+}
+
+.alert.success {
+    background: #306230;
+}
+
+.alert.error {
+    background: #4f1f1f;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 24px;
+        margin: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+    }
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.history-item {
+    background: #306230;
+    border: 2px solid #0f380f;
+    margin-bottom: 12px;
+    padding: 16px;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(15, 56, 15, 0.3);
+}
+
+.history-item::before {
+    content: "►";
+    position: absolute;
+    left: 8px;
+    color: #9bbc0f;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.history-item:hover::before {
+    opacity: 1;
+}
+
+.history-item p {
+    margin: 8px 0;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.back-btn {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+/* 添加像素风格动画 */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.pixel-icon {
+    display: inline-block;
+    image-rendering: pixelated;
+    font-size: 24px;
+}
+
+/* 添加输入框聚焦效果 */
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #183018;
+    box-shadow: 0 0 0 2px #9bbc0f33;
+    transform: translateY(-1px);
+}
+
+/* 添加像素风格滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #c6e6c6;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #306230;
+    border: 2px solid #c6e6c6;
+}
+
+.loading::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    background: #f8f8f8;
+    animation: pixelSpin 1s steps(8) infinite;
+}
+
+@keyframes pixelSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 添加像素化文字效果 */
+.pixel-text {
+    font-size: 12px;
+    line-height: 1.5;
+    text-shadow: 2px 2px #000;
+    letter-spacing: 1px;
+}
+
+/* 添加像素化边框效果 */
+.pixel-box {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #16213e;
+    border: 2px solid #30475e;
+}
+
+.pixel-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #30475e 25%, transparent 25%),
+                linear-gradient(-45deg, #30475e 25%, transparent 25%);
+    background-size: 4px 4px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* 添加像素风格装饰 */
+.pixel-decoration {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #9bbc0f;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    height: 2px;
+    background: #9bbc0f;
+    opacity: 0.3;
+}
+
+/* 扫描线效果 */
+.container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(155, 188, 15, 0.1);
+    animation: scan 8s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes scan {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+}
+
+/* 像素风格的欢迎页面 */
+.welcome-screen {
+    text-align: center;
+    padding: 2rem;
+}
+
+.lighter-number-display {
+    font-size: 2rem;
+    margin: 2rem 0;
+    animation: pulse 2s infinite;
+}
+
+.usage-count {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(155, 188, 15, 0.1);
+    border-radius: 4px;
+}
+
+.start-button {
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: #9bbc0f;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 像素风格动画 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 表单渐入动画 */
+.form-container {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+textarea::placeholder {
+    color: #0f380f;
+    opacity: 0.7;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+} 
