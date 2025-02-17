@@ -26,22 +26,37 @@
                 <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
             </div>
             
-            <div class="form-group">
-                <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
-                <input type="text" id="source" name="source" placeholder="例如：朋友赠送、商店购买等">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
+                    <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
+                    <select id="source" name="source" required>
+                        <option value="">选择获取方式...</option>
+                        <option value="命运安排">命运安排</option>
+                        <option value="醉酒所得">醉酒所得</option>
+                        <option value="强行占有">强行占有</option>
+                        <option value="偶然邂逅">偶然邂逅</option>
+                        <option value="神秘赠予">神秘赠予</option>
+                        <option value="薪火相传">薪火相传</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-group full-width">
                 <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
                 <textarea id="message" name="message" rows="3" placeholder="例如：
 • 这个打火机是怎么来到你手里的？
 • 你用它点燃了什么？（香烟、蜡烛、篝火…）
-• 你想把它传递给谁？"></textarea>
+• 它让你想起了什么？"></textarea>
             </div>
             
-            <div class="form-group">
-                <label for="location"><i class="fas fa-map-marker-alt"></i> 使用地点:</label>
-                <input type="text" id="location" name="location" placeholder="例如：北京、上海等">
+            <div class="form-group full-width">
+                <label for="username"><i class="fas fa-user"></i> 你的名字:</label>
+                <input type="text" id="username" name="username" placeholder="留下你的名字（选填）" maxlength="20">
             </div>
             
             <button type="submit">提交</button>
@@ -49,5 +64,12 @@
     </div>
     <script src="/js/validation.js"></script>
     <script src="/js/form.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="/js/background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundAnimation();
+        });
+    </script>
 </body>
 </html> 

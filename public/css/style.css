@@ -14,28 +14,11 @@ body {
 }
 
 body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        linear-gradient(90deg, #0f380f 2px, transparent 2px) 0 0,
-        linear-gradient(0deg, #0f380f 2px, transparent 2px) 0 0;
-    background-size: 16px 16px;
-    opacity: 0.2;
-    pointer-events: none;
-    animation: gridScroll 20s linear infinite;
-}
-
-@keyframes gridScroll {
-    from { transform: translateY(0); }
-    to { transform: translateY(16px); }
+    display: none;
 }
 
 .container {
-    background: #306230; /* GBA深绿色 */
+    background: #306230;
     border: 4px solid #0f380f;
     box-shadow: 
         0 0 0 4px #306230,
@@ -44,6 +27,11 @@ body::before {
     margin: 32px auto;
     max-width: 480px;
     position: relative;
+    animation: backgroundMove 20s linear infinite;
+    background-image: 
+        linear-gradient(rgba(15, 56, 15, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 56, 15, 0.2) 1px, transparent 1px);
+    background-size: 16px 16px;
 }
 
 h1, h2 {
@@ -61,8 +49,7 @@ h1 i {
 }
 
 .form-group {
-    margin-bottom: 24px;
-    position: relative;
+    margin-bottom: 0;
 }
 
 .form-group label {
@@ -71,6 +58,7 @@ h1 i {
     margin-bottom: 8px;
     display: block;
     text-shadow: 1px 1px #0f380f;
+    white-space: nowrap;
 }
 
 label {
@@ -352,22 +340,14 @@ textarea:focus {
     opacity: 0.3;
 }
 
-/* 扫描线效果 */
-.container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: rgba(155, 188, 15, 0.1);
-    animation: scan 8s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes scan {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(100%); }
+/* 添加背景移动动画 */
+@keyframes backgroundMove {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -16px -16px;
+    }
 }
 
 /* 像素风格的欢迎页面 */
@@ -409,17 +389,55 @@ textarea:focus {
 /* 表单渐入动画 */
 .form-container {
     animation: slideIn 0.5s ease-out;
+    image-rendering: pixelated;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.form-container h1 {
+    font-size: 28px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+    text-shadow: 
+        2px 0 0 #306230,
+        -2px 0 0 #306230,
+        0 2px 0 #306230,
+        0 -2px 0 #306230;
+}
+
+.form-group label {
+    font-size: 16px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+    text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
+    margin-bottom: 12px;
+}
+
+input[type="number"],
+input[type="text"],
+select,
+textarea {
+    font-size: 16px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+    padding: 16px;
+}
+
+button[type="submit"] {
+    font-size: 18px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+    padding: 16px 32px;
+}
+
+/* 提示文字样式 */
+.alert {
+    font-size: 16px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
 }
 
 textarea::placeholder {
@@ -432,4 +450,225 @@ textarea::placeholder {
 textarea {
     min-height: 120px;
     resize: vertical;
+}
+
+/* 在现有样式中添加 */
+select {
+    background: #9bbc0f;
+    border: 2px solid #0f380f;
+    color: #0f380f;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+/* 移除 IE 的下拉箭头 */
+select::-ms-expand {
+    display: none;
+}
+
+/* 分享模态框 */
+.share-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 31, 15, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+/* 分享卡片样式 */
+.share-card {
+    background: #306230;
+    border: 4px solid #0f380f;
+    padding: 24px;
+    width: 360px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        0 0 0 4px #306230,
+        inset 0 0 20px rgba(15, 56, 15, 0.5);
+    animation: slideUp 0.3s ease;
+    image-rendering: pixelated;
+    transform-style: preserve-3d;
+}
+
+.share-card-content {
+    text-align: center;
+    padding: 24px;
+    background: #9bbc0f;
+    border: 4px solid #0f380f;
+    image-rendering: pixelated;
+    letter-spacing: 1px;
+}
+
+.card-header {
+    margin-bottom: 24px;
+    border-bottom: 2px solid #0f380f;
+    padding-bottom: 16px;
+}
+
+.share-card h2 {
+    font-size: 24px;
+    margin: 0;
+    color: #0f380f;
+    text-shadow: 
+        2px 0 0 #9bbc0f,
+        -2px 0 0 #9bbc0f,
+        0 2px 0 #9bbc0f,
+        0 -2px 0 #9bbc0f;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+}
+
+.share-info {
+    margin: 24px 0;
+    padding: 16px;
+    background: rgba(48, 98, 48, 0.1);
+    border: 2px solid #0f380f;
+    box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.2);
+}
+
+.share-info p {
+    margin: 12px 0;
+    color: #0f380f;
+    font-size: 16px;
+    line-height: 1.6;
+    word-break: break-word;
+    text-shadow: 1px 1px 0 rgba(155, 188, 15, 0.5);
+}
+
+.share-info .location {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 16px;
+    text-shadow: 
+        1px 1px 0 #9bbc0f,
+        -1px -1px 0 #9bbc0f;
+}
+
+.share-info .message {
+    padding: 12px;
+    background: rgba(15, 56, 15, 0.05);
+    border-radius: 4px;
+    box-shadow: inset 0 0 4px rgba(15, 56, 15, 0.1);
+}
+
+.share-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid #0f380f;
+}
+
+.share-footer p {
+    font-size: 14px;
+    color: #0f380f;
+    text-shadow: 1px 1px 0 rgba(155, 188, 15, 0.7);
+    margin-top: 8px;
+}
+
+.qr-placeholder {
+    width: 100px;
+    height: 100px;
+    margin: 16px auto;
+    background: #0f380f;
+    border: 2px solid #0f380f;
+}
+
+.share-btn {
+    background: #0f380f;
+    color: #9bbc0f;
+    border: none;
+    padding: 16px 32px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 16px;
+    transition: all 0.2s ease;
+    border: 2px solid #0f380f;
+    box-shadow: 
+        0 4px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.2);
+}
+
+.share-btn:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 2px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 确保所有像素文字保持锐利 */
+.pixel-text {
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+}
+
+/* 添加网格布局支持 */
+form {
+    display: grid;
+    grid-gap: 24px;
+}
+
+/* 添加行内布局容器 */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* 调整输入框样式以适应新布局 */
+.form-group {
+    margin-bottom: 0;  /* 移除底部边距，由grid-gap控制 */
+}
+
+/* 统一输入框和选择框的高度和样式 */
+input[type="text"],
+input[type="number"],
+select {
+    height: 44px;  /* 统一高度 */
+    padding: 0 12px;  /* 统一内边距 */
+    font-size: 12px;  /* 统一字体大小 */
+    line-height: 44px;  /* 文字垂直居中 */
+}
+
+/* 确保文本框占满整行 */
+.form-group.full-width {
+    grid-column: 1 / -1;
 } 
