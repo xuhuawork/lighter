@@ -31,6 +31,7 @@
         </button>
     </div>
     
+    <script src="/js/background.js"></script>
     <script>
         // 从URL获取打火机编号
         const urlParams = new URLSearchParams(window.location.search);
@@ -56,6 +57,10 @@
                     document.getElementById('userCount').textContent = data.count;
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundAnimation();
+        });
     </script>
 </body>
 </html> 

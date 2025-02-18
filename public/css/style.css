@@ -24,9 +24,11 @@ body::before {
         0 0 0 4px #306230,
         inset 0 0 20px rgba(15, 56, 15, 0.5);
     padding: 24px;
-    margin: 32px auto;
+    margin: 16px auto; /* 减小外边距 */
     max-width: 480px;
+    width: calc(100% - 32px); /* 确保在小屏幕上有边距 */
     position: relative;
+    box-sizing: border-box; /* 确保padding不会增加宽度 */
     animation: backgroundMove 20s linear infinite;
     background-image: 
         linear-gradient(rgba(15, 56, 15, 0.2) 1px, transparent 1px),
@@ -80,7 +82,7 @@ input[type="text"],
 textarea {
     background: #9bbc0f;
     border: 2px solid #0f380f;
-    color: #0f380f;
+    color: #0f380f; /* 默认文字颜色 */
     padding: 12px;
     width: 100%;
     box-sizing: border-box;
@@ -91,22 +93,24 @@ textarea {
     position: relative;
 }
 
-/* 输入框聚焦样式 */
-input[type="number"]:focus,
-input[type="text"]:focus,
-textarea:focus {
-    outline: none;
-    background: #8bac0f; /* 稍微暗一点的绿色 */
-    border-color: #0f380f;
-    box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.3);
-}
-
 /* 输入框填写时的样式 */
 input[type="number"]:not(:placeholder-shown),
 input[type="text"]:not(:placeholder-shown),
 textarea:not(:placeholder-shown) {
-    background: #9bbc0f;
+    background: #8bac0f; /* 稍微暗一点的背景 */
+    color: #0f380f; /* 保持文字颜色深色 */
     box-shadow: 0 0 8px rgba(155, 188, 15, 0.3);
+}
+
+/* 输入框聚焦时的样式 */
+input[type="number"]:focus,
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    background: #8bac0f;
+    color: #0f380f;
+    border-color: #0f380f;
+    box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.3);
 }
 
 button {
@@ -199,43 +203,121 @@ button.loading::after {
     100% { background-position: 0% 50%; }
 }
 
+/* 历史记录页面容器样式 */
+.history-container {
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 32px;
+    background: #306230;
+    border: 4px solid #0f380f;
+    box-shadow: 
+        0 0 0 4px #306230,
+        inset 0 0 20px rgba(15, 56, 15, 0.5);
+}
+
+/* 历史记录标题样式 */
+.history-container h1 {
+    font-size: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid rgba(155, 188, 15, 0.2);
+    text-align: center;
+    color: #9bbc0f;
+}
+
+/* 历史记录列表容器 */
+#historyList {
+    display: grid;
+    grid-gap: 24px;
+    padding: 24px;
+    background: #1f4f1f;
+    border: 3px solid #0f380f;
+    box-shadow: 
+        inset 0 0 20px rgba(15, 56, 15, 0.5),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 历史记录条目样式 */
 .history-item {
     background: #306230;
-    border: 2px solid #0f380f;
-    margin-bottom: 12px;
-    padding: 16px;
+    border: 3px solid #0f380f;
+    padding: 24px;
+    box-shadow: 
+        0 4px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
     position: relative;
-    box-shadow: inset 0 0 10px rgba(15, 56, 15, 0.3);
+    display: flex;
+    flex-direction: column;
 }
 
-.history-item::before {
-    content: "►";
-    position: absolute;
-    left: 8px;
+/* 历史记录内容区域 */
+.history-content {
+    flex: 1;
+}
+
+/* 历史记录签名区域 */
+.history-signature {
+    text-align: right;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid rgba(155, 188, 15, 0.2);
+}
+
+/* 用户名样式 */
+.history-item .username {
+    font-style: italic;
     color: #9bbc0f;
-    opacity: 0;
-    transition: opacity 0.2s;
+    font-size: 12px;
+    text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
+    margin: 0;
+    padding: 0;
 }
 
-.history-item:hover::before {
-    opacity: 1;
-}
-
+/* 历史记录文字样式 */
 .history-item p {
-    margin: 8px 0;
-    color: rgba(0, 0, 0, 0.8);
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #9bbc0f;
 }
 
+/* 历史记录强调文字 */
+.history-item strong {
+    color: #9bbc0f;
+    margin-right: 12px;
+    font-size: 14px;
+    text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
+}
+
+/* 返回按钮样式 */
 .back-btn {
-    display: block;
-    text-align: center;
-    margin-top: 24px;
-    color: #3b82f6;
+    display: inline-block;
+    margin-top: 32px;
+    padding: 16px 32px;
+    background: #0f380f;
+    color: #9bbc0f;
     text-decoration: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    border: 3px solid #0f380f;
+    box-shadow: 
+        0 4px 0 #081f0f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+    transition: all 0.2s ease;
 }
 
 .back-btn:hover {
-    text-decoration: underline;
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 0 #081f0f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.2);
+}
+
+.back-btn:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 2px 0 #081f0f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
 }
 
 /* 添加像素风格动画 */
@@ -303,8 +385,8 @@ textarea:focus {
     position: relative;
     padding: 16px;
     margin-bottom: 16px;
-    background: #16213e;
-    border: 2px solid #30475e;
+    background: #306230;
+    border: 2px solid #0f380f;
 }
 
 .pixel-box::before {
@@ -314,11 +396,11 @@ textarea:focus {
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, #30475e 25%, transparent 25%),
-                linear-gradient(-45deg, #30475e 25%, transparent 25%);
+    background: linear-gradient(45deg, #0f380f 25%, transparent 25%),
+                linear-gradient(-45deg, #0f380f 25%, transparent 25%);
     background-size: 4px 4px;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.2;
 }
 
 /* 添加像素风格装饰 */
@@ -356,27 +438,36 @@ textarea:focus {
     padding: 2rem;
 }
 
+.welcome-screen h1 {
+    font-size: 28px;  /* 增大标题字体 */
+    margin-bottom: 40px;
+}
+
+.welcome-screen p {
+    font-size: 16px;  /* 增大正文字体 */
+    line-height: 1.8;
+    margin: 20px 0;
+}
+
 .lighter-number-display {
-    font-size: 2rem;
+    font-size: 32px;  /* 增大打火机编号字体 */
     margin: 2rem 0;
     animation: pulse 2s infinite;
 }
 
 .usage-count {
-    margin: 1rem 0;
-    padding: 1rem;
+    font-size: 20px;  /* 增大使用次数字体 */
+    margin: 1.5rem 0;
+    padding: 1.5rem;
     background: rgba(155, 188, 15, 0.1);
     border-radius: 4px;
 }
 
-.start-button {
-    margin-top: 2rem;
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #9bbc0f;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* 欢迎页面按钮样式 */
+.welcome-screen .btn {
+    font-size: 16px;  /* 增大按钮字体 */
+    padding: 16px 32px;
+    margin: 16px;
 }
 
 /* 像素风格动画 */
@@ -386,70 +477,98 @@ textarea:focus {
     100% { transform: scale(1); }
 }
 
-/* 表单渐入动画 */
+/* 表单容器优化 */
 .form-container {
-    animation: slideIn 0.5s ease-out;
-    image-rendering: pixelated;
+    max-width: 560px;
+    margin: 20px auto;
+    padding: 20px;
+    width: calc(100% - 32px);
+    background: #306230;
+    border: 4px solid #0f380f;
+    box-shadow: 
+        0 0 0 4px #306230,
+        inset 0 0 20px rgba(15, 56, 15, 0.5);
 }
 
+/* 表单标题优化 */
 .form-container h1 {
-    font-size: 28px;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-    text-rendering: optimizeSpeed;
-    text-shadow: 
-        2px 0 0 #306230,
-        -2px 0 0 #306230,
-        0 2px 0 #306230,
-        0 -2px 0 #306230;
+    font-size: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid rgba(155, 188, 15, 0.2);
 }
 
-.form-group label {
-    font-size: 16px;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-    text-rendering: optimizeSpeed;
-    text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
-    margin-bottom: 12px;
+/* 表单布局优化 */
+form {
+    display: grid;
+    grid-gap: 32px;  /* 增加表单项间距 */
 }
 
-input[type="number"],
+/* 输入框样式优化 */
 input[type="text"],
+input[type="number"],
 select,
 textarea {
-    font-size: 16px;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-    text-rendering: optimizeSpeed;
+    background: #306230;
+    border: 3px solid #0f380f;
+    color: #9bbc0f;
     padding: 16px;
+    box-shadow: 
+        0 4px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
 }
 
-button[type="submit"] {
-    font-size: 18px;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-    text-rendering: optimizeSpeed;
-    padding: 16px 32px;
+/* 标签样式优化 */
+.form-group label {
+    font-size: 14px;  /* 增大标签字体 */
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
 }
 
-/* 提示文字样式 */
-.alert {
+.form-group label i {
+    margin-right: 12px;
     font-size: 16px;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-    text-rendering: optimizeSpeed;
 }
 
-textarea::placeholder {
-    color: #0f380f;
-    opacity: 0.7;
-    font-size: 10px;
-    line-height: 1.5;
+/* 提交按钮优化 */
+button[type="submit"] {
+    font-size: 16px;
+    padding: 16px 32px;
+    margin-top: 32px;
+    background: #0f380f;
+    border: 3px solid #0f380f;
+    box-shadow: 
+        0 4px 0 #081f0f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+    transition: all 0.2s ease;
 }
 
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 0 #081f0f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.2);
+}
+
+/* 表单行布局优化 */
+.form-row {
+    display: block; /* 改为块级布局 */
+    margin-bottom: 16px;
+}
+
+/* 文本框优化 */
 textarea {
-    min-height: 120px;
-    resize: vertical;
+    min-height: 140px;  /* 增加文本框高度 */
+    line-height: 1.6;
+}
+
+/* 警告提示优化 */
+.alert {
+    font-size: 14px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border-width: 3px;
 }
 
 /* 在现有样式中添加 */
@@ -466,7 +585,6 @@ select {
     -moz-appearance: none;
     appearance: none;
     cursor: pointer;
-    position: relative;
 }
 
 /* 移除 IE 的下拉箭头 */
@@ -671,4 +789,110 @@ select {
 /* 确保文本框占满整行 */
 .form-group.full-width {
     grid-column: 1 / -1;
+}
+
+/* 时间标记样式 */
+.time-label {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    padding: 4px 12px;
+    font-size: 10px;
+    background: #0f380f;
+    color: #9bbc0f;
+    border: 2px solid #0f380f;
+    box-shadow: 
+        0 2px 0 #081f0f,
+        inset 0 0 0 1px rgba(155, 188, 15, 0.1);
+    z-index: 1;
+}
+
+.time-label.first {
+    background: #9bbc0f;
+    color: #0f380f;
+}
+
+.time-label.latest {
+    background: #306230;
+}
+
+/* 调整历史记录条目的定位 */
+.history-item {
+    position: relative;
+    margin-top: 16px;
+}
+
+/* 表单组样式优化 */
+.form-group {
+    background: #1f4f1f;
+    border: 3px solid #0f380f;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 
+        inset 0 0 20px rgba(15, 56, 15, 0.5),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 输入框焦点样式 */
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    background: #407240;
+    box-shadow: 
+        0 4px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.2);
+}
+
+/* 调整移动端的文字大小 */
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    textarea,
+    select {
+        font-size: 16px; /* 增大移动端字体，防止自动缩放 */
+        padding: 12px;
+    }
+
+    .form-group {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    /* 调整按钮大小 */
+    button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .form-container {
+        padding: 16px;
+        margin: 16px auto;
+    }
+
+    textarea {
+        min-height: 120px;
+    }
+}
+
+/* 确保表单元素在移动端有足够的点击区域 */
+input, select, textarea, button {
+    min-height: 44px; /* iOS建议的最小触摸区域 */
 } 

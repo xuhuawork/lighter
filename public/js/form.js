@@ -25,7 +25,8 @@ document.querySelector('form').addEventListener('submit', function(e) {
         lighterNumber: document.getElementById('lighterNumber').value,
         source: document.getElementById('source').value.trim(),
         message: document.getElementById('message').value.trim(),
-        location: document.getElementById('location').value.trim()
+        location: document.getElementById('location').value.trim(),
+        username: document.getElementById('username').value.trim()
     };
 
     // 发送请求
@@ -49,7 +50,8 @@ document.querySelector('form').addEventListener('submit', function(e) {
             showShareCard({
                 lighterNumber: data.lighterNumber,
                 location: data.location,
-                message: data.message
+                message: data.message,
+                username: data.username
             });
             
             // 3秒后再跳转到历史记录页面
@@ -190,4 +192,15 @@ function downloadShareCard() {
         // 恢复原始样式
         card.style.cssText = originalStyle;
     });
+}
+
+// 修改生成二维码的 URL
+function generateQRCode(lighterNumber) {
+    const currentHost = window.location.hostname;
+    const port = window.location.port;
+    // 如果是本地开发环境，使用局域网 IP
+    const baseUrl = currentHost === 'localhost' 
+        ? `http://192.168.31.63:${port}`  // 替换为你的实际 IP
+        : window.location.origin;
+    return `${baseUrl}/welcome?number=${lighterNumber}`;
 } 

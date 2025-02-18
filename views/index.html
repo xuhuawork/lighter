@@ -6,11 +6,12 @@
     <title>打火机追踪</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
 </head>
 <body>
     <div class="container form-container">
         <h1>
-            <span class="pixel-icon">🔥</span> 打火机信息收集
+            <span class="pixel-icon">🔥</span> 火机流浪日记0.1
         </h1>
         <div class="alert success" style="display:none;">
             <i class="fas fa-check-circle"></i> 提交成功！
@@ -21,32 +22,30 @@
         <form action="/submit" method="POST">
             <div class="form-group">
                 <label for="lighterNumber" class="pixel-text">
-                    <span class="pixel-icon">▶</span> 打火机编号 (1-25)
+                    <span class="pixel-icon">▶</span> 火机编号 (1-25)
                 </label>
                 <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
             </div>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
-                    <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
-                </div>
-                
-                <div class="form-group">
-                    <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
-                    <select id="source" name="source" required>
-                        <option value="">选择获取方式...</option>
-                        <option value="命运安排">命运安排</option>
-                        <option value="醉酒所得">醉酒所得</option>
-                        <option value="强行占有">强行占有</option>
-                        <option value="偶然邂逅">偶然邂逅</option>
-                        <option value="神秘赠予">神秘赠予</option>
-                        <option value="薪火相传">薪火相传</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
+                <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
             </div>
             
-            <div class="form-group full-width">
+            <div class="form-group">
+                <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
+                <select id="source" name="source" required>
+                    <option value="">选择获取方式...</option>
+                    <option value="命运安排">命运安排</option>
+                    <option value="醉酒所得">醉酒所得</option>
+                    <option value="强行占有">强行占有</option>
+                    <option value="偶然邂逅">偶然邂逅</option>
+                    <option value="神秘赠予">神秘赠予</option>
+                    <option value="薪火相传">薪火相传</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
                 <textarea id="message" name="message" rows="3" placeholder="例如：
 • 这个打火机是怎么来到你手里的？
@@ -54,12 +53,12 @@
 • 它让你想起了什么？"></textarea>
             </div>
             
-            <div class="form-group full-width">
+            <div class="form-group">
                 <label for="username"><i class="fas fa-user"></i> 你的名字:</label>
                 <input type="text" id="username" name="username" placeholder="留下你的名字（选填）" maxlength="20">
             </div>
             
-            <button type="submit">提交</button>
+            <button type="submit">上传日记</button>
         </form>
     </div>
     <script src="/js/validation.js"></script>
@@ -70,6 +69,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initBackgroundAnimation();
         });
+        eruda.init();
     </script>
 </body>
 </html> 

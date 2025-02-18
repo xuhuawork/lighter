@@ -47,6 +47,10 @@ const lighterSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
+    username: { 
+        type: String, 
+        default: '匿名用户' 
+    },
     timestamp: { 
         type: Date, 
         default: Date.now 
@@ -107,12 +111,13 @@ app.post('/submit', async (req, res) => {
 
         const userIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         
-        // 创建新记录
+        // 创建新记录，包含用户名
         const newLighter = new Lighter({
             lighterNumber,
             source: req.body.source.trim(),
             message: req.body.message.trim(),
             location: req.body.location.trim(),
+            username: req.body.username ? req.body.username.trim() : '匿名用户',
             userIP
         });
 
@@ -129,12 +134,11 @@ app.post('/submit', async (req, res) => {
         await newLighter.save();
         console.log('记录保存成功:', newLighter);
         res.json({ success: true });
-    } catch (err) {
-        console.error('提交错误:', err);
+    } catch (error) {
+        console.error('保存记录时出错:', error);
         res.status(500).json({
             success: false,
-            error: '提交失败，请稍后再试。',
-            details: process.env.NODE_ENV === 'development' ? err.message : undefined
+            error: '服务器错误'
         });
     }
 });
@@ -158,10 +162,62 @@ app.get('/history/:lighterNumber', async (req, res) => {
 
 app.get('/api/history/:lighterNumber', async (req, res) => {
     try {
-        const history = await Lighter.find({ lighterNumber: req.params.lighterNumber })
-            .sort({ timestamp: -1 });
-        res.json(history);
+        // 获取所有历史记录并按时间排序
+        const allHistory = await Lighter.find({ lighterNumber: req.params.lighterNumber })
+            .sort({ timestamp: 1 }); // 按时间正序排列
+
+        if (allHistory.length === 0) {
+            return res.json([]);
+        }
+
+        // 为每条记录添加计数
+        const historyWithCount = allHistory.map((record, index) => ({
+            ...record.toObject(),
+            count: index + 1
+        }));
+
+        let selectedHistory = [];
+        
+        // 1. 添加第一条记录（最早的）
+        selectedHistory.push(historyWithCount[0]);
+
+        // 2. 如果有超过3条记录，添加随机的中间记录
+        if (allHistory.length > 3) {
+            // 排除第一条和最后两条记录
+            const middleRecords = historyWithCount.slice(1, -2);
+            // 计算需要随机选择的数量（最多4条）
+            const randomCount = Math.min(4, middleRecords.length);
+            
+            // 随机选择记录
+            const randomIndices = new Set();
+            while (randomIndices.size < randomCount) {
+                const randomIndex = Math.floor(Math.random() * middleRecords.length);
+                randomIndices.add(randomIndex);
+            }
+            
+            // 添加随机选择的记录
+            [...randomIndices].forEach(index => {
+                selectedHistory.push(middleRecords[index]);
+            });
+        } else if (allHistory.length > 1) {
+            // 如果记录数在2-3条之间，添加所有中间记录
+            selectedHistory = selectedHistory.concat(historyWithCount.slice(1, -1));
+        }
+
+        // 3. 添加最后两条记录（如果存在）
+        if (allHistory.length >= 2) {
+            selectedHistory.push(historyWithCount[historyWithCount.length - 2]); // 倒数第二条
+        }
+        if (allHistory.length >= 1) {
+            selectedHistory.push(historyWithCount[historyWithCount.length - 1]); // 最后一条
+        }
+
+        // 确保最多返回6条记录
+        selectedHistory = selectedHistory.slice(0, 6);
+
+        res.json(selectedHistory);
     } catch (err) {
+        console.error('获取历史记录错误:', err);
         res.status(500).json({ error: '获取历史记录失败' });
     }
 });
@@ -207,6 +263,17 @@ mongoose.connection.on('error', (err) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`服务器运行在 http://localhost:${PORT}`);
+    // 获取本机的局域网 IP 地址
+    const { networkInterfaces } = require('os');
+    const nets = networkInterfaces();
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            // 跳过内部 IP 和非 IPv4 地址
+            if (net.family === 'IPv4' && !net.internal) {
+                console.log(`局域网访问地址: http://${net.address}:${PORT}`);
+            }
+        }
+    }
 }); 
