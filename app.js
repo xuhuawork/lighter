@@ -10,7 +10,7 @@ const app = express();
 mongoose.set('strictQuery', false);
 
 // 更详细的数据库连接和错误处理
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://10.2.24.14:27017/lighter', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/lighter', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000

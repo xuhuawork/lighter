@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机旅程</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container welcome-screen">
+        <h1 class="pixel-text">
+            <span class="pixel-icon">🔥</span> 流浪火机旅程记录
+        </h1>
+        
+        <div class="lighter-number-display">
+            NO.<span id="currentNumber"></span> 号浪子火机
+        </div>
+        
+        <div class="usage-count">
+            你是这个火机第 <span id="userCount">0</span> 主人
+        </div>
+        
+        <p class="pixel-text">
+            沈序桦导演蓄意丢失了25个Lighter<br>
+            每个打火机都在记录着不同的故事<br>
+            现在，轮到你来续写这段旅程了！
+        </p>
+        
+        <button class="start-button pixel-text" onclick="location.href='/form?number=' + lighterNumber">
+            📝 留下我的故事
+        </button>
+    </div>
+
+    <script>
+        // 从URL获取打火机编号
+        const urlParams = new URLSearchParams(window.location.search);
+        const lighterNumber = urlParams.get('number') || window.location.pathname.split('/').pop();
+        
+        // 更新页面内容
+        if (lighterNumber) {
+            document.getElementById('currentNumber').textContent = lighterNumber;
+        }
+    </script>
+</body>
+</html> 

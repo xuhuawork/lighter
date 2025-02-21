@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机历史记录</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="pixel-text">
+            <span class="pixel-icon">🔥</span> 火机旅程记录
+        </h1>
+        
+        <div class="lighter-info">
+            <div class="lighter-number">
+                NO.<span id="currentNumber"></span> 号浪子火机
+            </div>
+            <div class="total-users">
+                已有 <span id="userCount">0</span> 人记录了这个火机的故事
+            </div>
+        </div>
+
+        <div id="historyList" class="history-list">
+            <!-- 历史记录将通过 JavaScript 动态添加 -->
+        </div>
+
+        <button class="pixel-button" onclick="location.href='/form?number=' + currentLighterNumber">
+            📝 添加我的故事
+        </button>
+    </div>
+
+    <script>
+        // 获取打火机编号
+        const currentLighterNumber = window.location.pathname.split('/').pop();
+        document.getElementById('currentNumber').textContent = currentLighterNumber;
+
+        // 获取历史记录
+        fetch(`/api/lighters/${currentLighterNumber}/history`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('userCount').textContent = data.length;
+                const historyList = document.getElementById('historyList');
+                
+                data.forEach(record => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item pixel-box';
+                    historyItem.innerHTML = `
+                        <div class="history-header">
+                            <span class="username">${record.username || '匿名用户'}</span>
+                            <span class="location">${record.location}</span>
+                        </div>
+                        <div class="story-content">
+                            <p>${record.message}</p>
+                        </div>
+                        <div class="story-footer">
+                            <span class="source">来源: ${record.source}</span>
+                            <span class="date">${new Date(record.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+            })
+            .catch(error => {
+                console.error('获取历史记录失败:', error);
+            });
+    </script>
+</body>
+</html> 
