@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机追踪 - 步骤3</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container form-container">
+        <h1>
+            <span class="pixel-icon">🔥</span> 火机流浪日记0.1
+        </1>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
+                <textarea id="message" name="message" rows="3" placeholder="例如：
+• 这个打火机是怎么来到你手里的？
+• 你用它点燃了什么？（香烟、蜡烛、篝火…）
+• 它让你想起了什么？"></textarea>
+            </div>
+            <button type="submit" onclick="submitForm()">提交</button>
+        </div>
+    </div>
+    <script>
+        function submitForm() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const formData = {
+                lighterNumber: urlParams.get('number'),
+                location: urlParams.get('location'),
+                source: urlParams.get('source'),
+                username: urlParams.get('username'),
+                message: document.getElementById('message').value
+            };
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/success';
+                } else {
+                    alert('提交失败，请重试');
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

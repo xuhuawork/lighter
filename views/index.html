@@ -19,46 +19,70 @@
         <div class="alert error" style="display:none;">
             <i class="fas fa-exclamation-circle"></i> 提交失败，请重试。
         </div>
-        <form action="/submit" method="POST">
-            <div class="form-group">
-                <label for="lighterNumber" class="pixel-text">
-                    <span class="pixel-icon">▶</span> 火机编号 (1-25)
-                </label>
-                <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
+        
+        <!-- 步骤指示器 -->
+        <div class="step-indicator">
+            <div class="step active" data-step="1"></div>
+            <div class="step" data-step="2"></div>
+            <div class="step" data-step="3"></div>
+        </div>
+
+        <form action="/submit" method="POST" id="multiStepForm">
+            <!-- 步骤1 -->
+            <div class="form-step active" data-step="1">
+                <div class="form-group">
+                    <label for="lighterNumber" class="pixel-text">
+                        <span class="pixel-icon">▶</span> 火机编号 (1-25)
+                    </label>
+                    <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
+                </div>
+                <div class="form-group select-wrapper">
+                    <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
+                    <select id="source" name="source" required>
+                        <option value="">选择获取方式...</option>
+                        <option value="命运安排">命运安排</option>
+                        <option value="醉酒所得">醉酒所得</option>
+                        <option value="强行占有">强行占有</option>
+                        <option value="偶然邂逅">偶然邂逅</option>
+                        <option value="神秘赠予">神秘赠予</option>
+                        <option value="薪火相传">薪火相传</option>
+                    </select>
+                </div>
+                <button type="button" class="next-step" onclick="nextStep(2)">下一步</button>
             </div>
-            
-            <div class="form-group">
-                <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
-                <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
+
+            <!-- 步骤2 -->
+            <div class="form-step" data-step="2">
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
+                    <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩..." required>
+                </div>
+                <div class="form-group">
+                    <label for="surroundings"><i class="fas fa-users"></i> 你身边是:</label>
+                    <input type="text" id="surroundings" name="surroundings" placeholder="例如：朋友、家人、陌生人...">
+                </div>
+                <div class="form-step-buttons">
+                    <button type="button" class="prev-step" onclick="prevStep(1)">上一步</button>
+                    <button type="button" class="next-step" onclick="nextStep(3)">下一步</button>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
-                <select id="source" name="source" required>
-                    <option value="">选择获取方式...</option>
-                    <option value="命运安排">命运安排</option>
-                    <option value="醉酒所得">醉酒所得</option>
-                    <option value="强行占有">强行占有</option>
-                    <option value="偶然邂逅">偶然邂逅</option>
-                    <option value="神秘赠予">神秘赠予</option>
-                    <option value="薪火相传">薪火相传</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
-                <textarea id="message" name="message" rows="3" placeholder="例如：
+
+            <!-- 步骤3 -->
+            <div class="form-step" data-step="3">
+                <div class="form-group">
+                    <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
+                    <textarea id="message" name="message" rows="3" placeholder="例如：
 • 这个打火机是怎么来到你手里的？
 • 你用它点燃了什么？（香烟、蜡烛、篝火…）
-• 它让你想起了什么？"></textarea>
+• 它让你想起了什么？" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> 你的名字:</label>
+                    <input type="text" id="username" name="username" placeholder="留下你的名字（选填）" maxlength="20">
+                </div>
+                <button type="button" class="prev-step" onclick="prevStep(2)">上一步</button>
+                <button type="submit">提交</button>
             </div>
-            
-            <div class="form-group">
-                <label for="username"><i class="fas fa-user"></i> 你的名字:</label>
-                <input type="text" id="username" name="username" placeholder="留下你的名字（选填）" maxlength="20">
-            </div>
-            
-            <button type="submit">上传日记</button>
         </form>
     </div>
     <script src="/js/validation.js"></script>
@@ -66,8 +90,33 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="/js/background.js"></script>
     <script>
+        // 步骤切换逻辑
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+
+            // 更新步骤指示器
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.step <= step) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        function nextStep(step) {
+            showStep(step);
+        }
+
+        function prevStep(step) {
+            showStep(step);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             initBackgroundAnimation();
+            showStep(1); // 默认显示第一步
         });
         eruda.init();
     </script>

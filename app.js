@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -10,7 +11,7 @@ const app = express();
 mongoose.set('strictQuery', false);
 
 // 更详细的数据库连接和错误处理
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://10.2.24.14:27017/lighter', {
+mongoose.connect('mongodb://127.0.0.1:27017/lighter', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000
@@ -66,10 +67,19 @@ lighterSchema.post('save', function(error, doc, next) {
 
 const Lighter = mongoose.model('Lighter', lighterSchema);
 
+// 添加访问计数器模型
+const visitorSchema = new mongoose.Schema({
+    count: { type: Number, default: 0 }
+});
+const Visitor = mongoose.model('Visitor', visitorSchema);
+
 // 中间件
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 添加字体文件的静态服务
+app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
 
 // 路由
 app.get('/', (req, res) => {
@@ -222,17 +232,60 @@ app.get('/api/history/:lighterNumber', async (req, res) => {
     }
 });
 
-// 欢迎页面路由
+// 修改欢迎页面路由
 app.get('/welcome', (req, res) => {
     console.log('访问欢迎页面');
     const filePath = path.join(__dirname, 'views', 'welcome.html');
-    console.log('文件路径:', filePath);
     res.sendFile(filePath);
 });
 
-// 表单页面路由
+// 修改 /welcome/:number 路由
+app.get('/welcome/:number', (req, res) => {
+    const lighterNumber = parseInt(req.params.number);
+    
+    // 验证打火机编号
+    if (isNaN(lighterNumber) || lighterNumber < 1 || lighterNumber > 25) {
+        return res.redirect('/welcome');
+    }
+    
+    // 重定向到带查询参数的欢迎页面
+    res.redirect(`/welcome?number=${lighterNumber}`);
+});
+
+// 修改表单页面路由
 app.get('/form', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    const number = parseInt(req.query.number);
+    
+    // 验证打火机编号
+    if (isNaN(number) || number < 1 || number > 25) {
+        return res.redirect('/welcome');
+    }
+    
+    // 读取HTML文件
+    let formHtml = fs.readFileSync(path.join(__dirname, 'views', 'index.html'), 'utf8');
+    
+    // 获取本机局域网IP
+    const networkInterfaces = require('os').networkInterfaces();
+    let localIP = '192.168.1.14'; // 默认IP
+    
+    // 查找实际的局域网IP
+    for (const name of Object.keys(networkInterfaces)) {
+        for (const net of networkInterfaces[name]) {
+            // 跳过内部IP和非IPv4地址
+            if (net.family === 'IPv4' && !net.internal) {
+                localIP = net.address;
+                break;
+            }
+        }
+    }
+    
+    // 注入IP到页面
+    formHtml = formHtml.replace('</head>',
+        `<meta name="local-ip" content="${localIP}">
+        </head>`
+    );
+    
+    res.send(formHtml);
 });
 
 // 获取使用次数API
@@ -244,6 +297,21 @@ app.get('/api/usage-count/:lighterNumber', async (req, res) => {
         res.json({ count });
     } catch (err) {
         res.status(500).json({ error: '获取使用次数失败' });
+    }
+});
+
+// 获取最后位置API
+app.get('/api/last-location/:lighterNumber', async (req, res) => {
+    try {
+        const lastRecord = await Lighter.findOne({ 
+            lighterNumber: req.params.lighterNumber 
+        })
+        .sort({ timestamp: -1 })
+        .select('location timestamp');
+        
+        res.json(lastRecord || {});
+    } catch (err) {
+        res.status(500).json({ error: '获取位置信息失败' });
     }
 });
 

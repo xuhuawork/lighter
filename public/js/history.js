@@ -46,6 +46,7 @@ function showHistoryPreview(data) {
                 <p class="pixel-text"><strong>来源：</strong>${item.source || '未知'}</p>
                 <p class="pixel-text"><strong>留言：</strong>${item.message || '无'}</p>
                 <p class="pixel-text"><strong>使用地点：</strong>${item.location || '未知'}</p>
+                ${item.surroundings ? `<p class="pixel-text"><strong>身边的人：</strong>${item.surroundings}</p>` : ''}
             </div>
             <div class="history-signature">
                 <p class="pixel-text username">
@@ -55,4 +56,16 @@ function showHistoryPreview(data) {
         `;
         previewList.appendChild(historyItem);
     });
+}
+
+function renderHistory(records) {
+    const historyList = document.getElementById('historyList');
+    historyList.innerHTML = records.map(record => `
+        <div class="history-item">
+            <p>位置：${record.location}</p>
+            ${record.surroundings ? `<p>身边的人：${record.surroundings}</p>` : ''}
+            <p>故事：${record.message}</p>
+            <p>时间：${new Date(record.timestamp).toLocaleString()}</p>
+        </div>
+    `).join('');
 } 

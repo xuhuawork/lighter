@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机追踪 - 步骤1</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container form-container">
+        <h1>
+            <span class="pixel-icon">🔥</span> 火机流浪日记0.1
+        </h1>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="lighterNumber" class="pixel-text">
+                    <span class="pixel-icon">▶</span> 火机编号 (1-25)
+                </label>
+                <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
+            </div>
+            <div class="form-group">
+                <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
+                <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
+            </div>
+            <button class="next-step" onclick="nextStep()">下一步</button>
+        </div>
+    </div>
+    <script>
+        function nextStep() {
+            const lighterNumber = document.getElementById('lighterNumber').value;
+            const location = document.getElementById('location').value;
+            window.location.href = `/form-step2?number=${lighterNumber}&location=${encodeURIComponent(location)}`;
+        }
+    </script>
+</body>
+</html> 

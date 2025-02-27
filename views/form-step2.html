@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打火机追踪 - 步骤2</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container form-container">
+        <h1>
+            <span class="pixel-icon">🔥</span> 火机流浪日记0.1
+        </h1>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
+                <select id="source" name="source" required>
+                    <option value="">选择获取方式...</option>
+                    <option value="命运安排">命运安排</option>
+                    <option value="醉酒所得">醉酒所得</option>
+                    <option value="强行占有">强行占有</option>
+                    <option value="偶然邂逅">偶然邂逅</option>
+                    <option value="神秘赠予">神秘赠予</option>
+                    <option value="薪火相传">薪火相传</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> 你的名字:</label>
+                <input type="text" id="username" name="username" placeholder="留下你的名字（选填）" maxlength="20">
+            </div>
+            <button class="next-step" onclick="nextStep()">下一步</button>
+        </div>
+    </div>
+    <script>
+        function nextStep() {
+            const source = document.getElementById('source').value;
+            const username = document.getElementById('username').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            window.location.href = `/form-step3?number=${urlParams.get('number')}&location=${urlParams.get('location')}&source=${encodeURIComponent(source)}&username=${encodeURIComponent(username)}`;
+        }
+    </script>
+</body>
+</html> 

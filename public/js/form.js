@@ -24,8 +24,9 @@ document.querySelector('form').addEventListener('submit', function(e) {
     const data = {
         lighterNumber: document.getElementById('lighterNumber').value,
         source: document.getElementById('source').value.trim(),
-        message: document.getElementById('message').value.trim(),
         location: document.getElementById('location').value.trim(),
+        surroundings: document.getElementById('surroundings').value.trim(),
+        message: document.getElementById('message').value.trim(),
         username: document.getElementById('username').value.trim()
     };
 
@@ -194,13 +195,93 @@ function downloadShareCard() {
     });
 }
 
-// 修改生成二维码的 URL
+// 更新二维码生成的 URL 格式
 function generateQRCode(lighterNumber) {
     const currentHost = window.location.hostname;
     const port = window.location.port;
-    // 如果是本地开发环境，使用局域网 IP
-    const baseUrl = currentHost === 'localhost' 
-        ? `http://192.168.31.63:${port}`  // 替换为你的实际 IP
-        : window.location.origin;
-    return `${baseUrl}/welcome?number=${lighterNumber}`;
+    
+    // 获取本机局域网IP
+    let baseUrl;
+    if (currentHost === 'localhost') {
+        // 如果是本地开发环境，尝试获取实际的局域网IP
+        baseUrl = `http://${getLocalIP()}:${port}`;
+    } else {
+        baseUrl = window.location.origin;
+    }
+    
+    // 使用新的URL格式
+    return `${baseUrl}/welcome/${lighterNumber}`;
+}
+
+// 获取本机局域网IP
+function getLocalIP() {
+    // 默认IP，如果无法获取实际IP则使用这个
+    let defaultIP = '192.168.1.14';
+    
+    // 尝试从页面获取实际IP
+    // 这个值应该由服务器在渲染页面时注入
+    const serverIP = document.querySelector('meta[name="local-ip"]')?.content;
+    
+    return serverIP || defaultIP;
+}
+
+// 修改提交逻辑
+function submitForm() {
+    const formData = {
+        lighterNumber: document.getElementById('lighterNumber').value,
+        source: document.getElementById('source').value,
+        location: document.getElementById('location').value,
+        surroundings: document.getElementById('surroundings').value,
+        message: document.getElementById('message').value,
+        username: document.getElementById('username').value
+    };
+
+    fetch('/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/success';
+        } else {
+            alert('提交失败，请重试');
+        }
+    });
+}
+
+// 修改步骤切换逻辑
+function showStep(step) {
+    const currentStep = document.querySelector('.form-step.active');
+    const nextStep = document.querySelector(`.form-step[data-step="${step}"]`);
+    
+    if (currentStep) {
+        // 判断是前进还是后退
+        const isPrev = step < currentStep.dataset.step;
+        currentStep.classList.remove('active');
+        if (isPrev) {
+            currentStep.classList.add('prev');
+        }
+    }
+    
+    if (nextStep) {
+        // 添加延迟以确保动画流畅
+        setTimeout(() => {
+            nextStep.classList.add('active');
+            if (nextStep.classList.contains('prev')) {
+                nextStep.classList.remove('prev');
+            }
+        }, 10);
+    }
+
+    // 更新步骤指示器
+    document.querySelectorAll('.step').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.step <= step) {
+            el.classList.add('active');
+        }
+    });
 } 

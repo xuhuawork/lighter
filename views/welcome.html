@@ -2,33 +2,53 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#081f0f">
     <title>打火机旅程</title>
+    <!-- 预加载字体 -->
+    <link rel="preload" href="/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="apple-touch-startup-image" href="/path/to/splash.png">
+    <link rel="apple-touch-icon" href="/path/to/icon.png">
 </head>
 <body>
     <div class="container welcome-screen">
         <h1 class="pixel-text">
-            <span class="pixel-icon">🔥</span> 流浪火机旅程记录
+            <span class="pixel-icon">🔥</span> 薪火相传测试项目
         </h1>
         
         <div class="lighter-number-display">
-            NO.<span id="currentNumber"></span> 号浪子火机
+            NO.<span id="currentNumber"></span> 号流浪火机
         </div>
         
         <div class="usage-count">
-            你是这个火机第 <span id="userCount">0</span> 主人
+            你是这个火机第 <span id="userCount">0</span> 个主人
+        </div>
+
+        <div id="lastLocation" class="last-location pixel-text" style="display: none;">
+            <div class="typewriter">
+                <span class="location-label">上次出现在：</span>
+                <span id="locationText"></span>
+                <span class="time-label">，时间：</span>
+                <span id="timeText"></span>
+            </div>
         </div>
         
         <p class="pixel-text">
             沈序桦导演蓄意丢失了25个Lighter<br>
-            每个打火机都在记录着不同的故事<br>
-            现在，轮到你来续写这段旅程了！
+            每个打火机都记录着不同的故事<br>
+            Now，轮到你来续写这段旅程了！
         </p>
         
         <button class="start-button pixel-text" onclick="location.href='/form?number=' + lighterNumber">
             📝 留下我的故事
         </button>
+
+        <p class="pixel-text" style="margin-top: 20px;">
+            项目构建：xuhuaworka@gmail.com
+        </p>
     </div>
     
     <script src="/js/background.js"></script>
@@ -50,12 +70,30 @@
         } else {
             document.getElementById('currentNumber').textContent = lighterNumber;
             
-            // 获取使用次数
-            fetch(`/api/usage-count/${lighterNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('userCount').textContent = data.count;
-                });
+            // 获取使用次数和最后一次记录
+            Promise.all([
+                fetch(`/api/usage-count/${lighterNumber}`).then(res => res.json()),
+                fetch(`/api/last-location/${lighterNumber}`).then(res => res.json())
+            ])
+            .then(([countData, lastData]) => {
+                // 设置使用次数（已提交的记录数 + 1）
+                document.getElementById('userCount').textContent = countData.count + 1;
+                
+                // 如果有最后一次记录，显示位置信息
+                if (lastData && lastData.location) {
+                    const typewriterElement = document.querySelector('.typewriter');
+                    const lastLocation = document.getElementById('lastLocation');
+                    
+                    // 先显示容器
+                    lastLocation.style.display = 'block';
+                    
+                    // 构建逐字显示的内容
+                    const text = `上次出现在：${lastData.location}，时间：${new Date(lastData.timestamp).toLocaleDateString()}`;
+                    typewriterElement.innerHTML = text.split('').map((char, i) => 
+                        `<span style="--i: ${i}">${char}</span>`
+                    ).join('');
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
