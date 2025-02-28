@@ -92,7 +92,7 @@ function showHistoryPreview(data) {
             <p class="pixel-text"><strong>时间：</strong>${new Date(item.timestamp).toLocaleString()}</p>
             <p class="pixel-text"><strong>来源：</strong>${item.source || '未知'}</p>
             <p class="pixel-text"><strong>说到：</strong>${item.message || '无'}</p>
-            <p class="pixel-text"><strong>使用地点：</strong>${item.location || '未知'}</p>
+            <p class="pixel-text"><strong>记录地点：</strong>${item.location || '未知'}</p>
         `;
         previewList.appendChild(historyItem);
     });

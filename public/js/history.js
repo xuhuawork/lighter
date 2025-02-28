@@ -146,14 +146,13 @@ function showHistoryPreview(data) {
             ${timeLabel}
             <div class="history-content larger-font">
                 <p class="pixel-text"><strong>来源：</strong>${item.source || '未知'}</p>
-                <p class="pixel-text"><strong>使用地点：</strong>${item.location || '未知'}</p>
+                <p class="pixel-text"><strong>记录地点：</strong>${item.location || '未知'}</p>
                 ${item.surroundings ? `<p class="pixel-text"><strong>现在正在：</strong>${item.surroundings}</p>` : ''}
                 <p class="pixel-text"><strong>说到：</strong>${item.message || '无'}</p>
             </div>
             <div class="history-signature larger-font">
-                <p class="pixel-text username">
-                    ${item.username ? `${item.username}` : '匿名用户'} ${formatDate(item.timestamp)}
-                </p>
+                <span>${formatDate(item.timestamp)}</span>
+                <span class="username">${item.username ? `· ${item.username}` : '· 匿名用户'}</span>
             </div>
         `;
         
