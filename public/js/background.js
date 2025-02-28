@@ -87,4 +87,46 @@ function initBackgroundAnimation() {
         document.body.removeChild(canvas);
         document.head.removeChild(style);
     };
-} 
+}
+
+function createSparksEffect() {
+    const container = document.createElement('div');
+    container.className = 'sparks-container';
+    document.body.appendChild(container);
+
+    function createSpark() {
+        const spark = document.createElement('div');
+        spark.className = 'spark';
+        
+        // 随机位置
+        const x = Math.random() * window.innerWidth;
+        const y = window.innerHeight + 10;
+        
+        // 随机大小
+        const scale = 0.5 + Math.random() * 1;
+        
+        spark.style.left = `${x}px`;
+        spark.style.bottom = `${y}px`;
+        spark.style.transform = `scale(${scale})`;
+        
+        container.appendChild(spark);
+        
+        // 动画结束后移除火星
+        spark.addEventListener('animationend', () => {
+            spark.remove();
+        });
+    }
+
+    // 定期创建新的火星
+    function generateSparks() {
+        if (Math.random() < 0.3) { // 30% 的概率生成火星
+            createSpark();
+        }
+        requestAnimationFrame(generateSparks);
+    }
+
+    generateSparks();
+}
+
+// 在所有页面加载时初始化火星效果
+document.addEventListener('DOMContentLoaded', createSparksEffect); 

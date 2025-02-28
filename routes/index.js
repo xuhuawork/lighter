@@ -26,7 +26,7 @@ router.post('/submit', async (req, res) => {
             lighterNumber,
             source,
             location,
-            surroundings, // 新增字段
+            surroundings,  // 确保这个字段被包含
             message,
             username,
             timestamp: new Date()
@@ -37,5 +37,27 @@ router.post('/submit', async (req, res) => {
     } catch (error) {
         console.error('提交错误:', error);
         res.status(500).json({ success: false, error: '服务器错误' });
+    }
+});
+
+// 修改历史记录路由
+router.get('/api/history/:lighterNumber', async (req, res) => {
+    try {
+        const history = await Record.find({ 
+            lighterNumber: parseInt(req.params.lighterNumber) 
+        })
+        .select('source location message timestamp username surroundings')
+        .sort({ timestamp: -1 });
+        
+        // 添加序号
+        const historyWithCount = history.map((record, index) => ({
+            ...record.toObject(),
+            count: history.length - index
+        }));
+        
+        res.json(historyWithCount);
+    } catch (err) {
+        console.error('获取历史记录失败:', err);
+        res.status(500).json({ error: '获取历史记录失败' });
     }
 }); 

@@ -11,7 +11,7 @@
     <div class="container form-container">
         <h1>
             <span class="pixel-icon">🔥</span> 火机流浪日记0.1
-        </1>
+        </h1>
         <div class="form-step">
             <div class="form-group">
                 <label for="message"><i class="fas fa-comment"></i> 为这个打火机留下你的故事:</label>
@@ -19,18 +19,44 @@
 • 这个打火机是怎么来到你手里的？
 • 你用它点燃了什么？（香烟、蜡烛、篝火…）
 • 它让你想起了什么？"></textarea>
+                <div class="char-count pixel-text" style="text-align: right; margin-top: 4px;">
+                    <span id="charCount">0</span>/500
+                </div>
             </div>
-            <button type="submit" onclick="submitForm()">提交</button>
+            <button onclick="submitForm()" id="submitBtn">
+                <span>提交</span>
+                <div class="loading-spinner" style="display: none;"></div>
+            </button>
         </div>
     </div>
     <script>
+        const messageInput = document.getElementById('message');
+        const charCount = document.getElementById('charCount');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = submitBtn.querySelector('.loading-spinner');
+
+        messageInput.addEventListener('input', () => {
+            charCount.textContent = messageInput.value.length;
+        });
+
+        let isSubmitting = false;
+
         function submitForm() {
+            if (isSubmitting) return;
+            if (!validateFormStep3()) return;
+
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            submitBtn.querySelector('span').style.visibility = 'hidden';
+
             const urlParams = new URLSearchParams(window.location.search);
             const formData = {
                 lighterNumber: urlParams.get('number'),
                 location: urlParams.get('location'),
                 source: urlParams.get('source'),
                 username: urlParams.get('username'),
+                surroundings: urlParams.get('surroundings'),
                 message: document.getElementById('message').value
             };
 
@@ -47,9 +73,22 @@
                     window.location.href = '/success';
                 } else {
                     alert('提交失败，请重试');
+                    isSubmitting = false;
+                    submitBtn.disabled = false;
+                    spinner.style.display = 'none';
+                    submitBtn.querySelector('span').style.visibility = 'visible';
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('提交失败，请重试');
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                spinner.style.display = 'none';
+                submitBtn.querySelector('span').style.visibility = 'visible';
             });
         }
     </script>
+    <script src="/js/background.js"></script>
 </body>
 </html> 

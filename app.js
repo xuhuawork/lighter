@@ -29,43 +29,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/lighter', {
 });
 
 // 定义数据模型
-const lighterSchema = new mongoose.Schema({
-    lighterNumber: { 
-        type: Number, 
-        required: true, 
-        min: 1, 
-        max: 25 
-    },
-    source: { 
-        type: String, 
-        required: true 
-    },
-    message: { 
-        type: String, 
-        required: true 
-    },
-    location: { 
-        type: String, 
-        required: true 
-    },
-    username: { 
-        type: String, 
-        default: '匿名用户' 
-    },
-    timestamp: { 
-        type: Date, 
-        default: Date.now 
-    },
-    userIP: String
-});
-
-// 添加模型的错误处理中间件
-lighterSchema.post('save', function(error, doc, next) {
-    console.log('保存后中间件触发:', error);
-    next(error);
-});
-
-const Lighter = mongoose.model('Lighter', lighterSchema);
+const Record = require('./models/Record');
 
 // 添加访问计数器模型
 const visitorSchema = new mongoose.Schema({
@@ -121,42 +85,35 @@ app.post('/submit', async (req, res) => {
 
         const userIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         
-        // 创建新记录，包含用户名
-        const newLighter = new Lighter({
+        // 创建新记录时包含 surroundings
+        const newRecord = new Record({
             lighterNumber,
             source: req.body.source.trim(),
             message: req.body.message.trim(),
             location: req.body.location.trim(),
+            surroundings: req.body.surroundings ? req.body.surroundings.trim() : '',  // 确保包含这个字段
             username: req.body.username ? req.body.username.trim() : '匿名用户',
             userIP
         });
 
-        // 保存前验证
-        const validationError = newLighter.validateSync();
-        if (validationError) {
-            console.error('验证错误:', validationError);
-            return res.status(400).json({
-                success: false,
-                error: '数据验证失败'
-            });
-        }
+        // 保存前打印记录内容
+        console.log('准备保存的记录:', newRecord);
 
-        await newLighter.save();
-        console.log('记录保存成功:', newLighter);
+        // 保存记录
+        await newRecord.save();
+        console.log('记录保存成功:', newRecord);
+        
         res.json({ success: true });
     } catch (error) {
-        console.error('保存记录时出错:', error);
-        res.status(500).json({
-            success: false,
-            error: '服务器错误'
-        });
+        console.error('提交错误:', error);
+        res.status(500).json({ success: false, error: '服务器错误' });
     }
 });
 
 app.get('/history/:lighterNumber', async (req, res) => {
     try {
         // 先获取数据，确保有数据再发送页面
-        const history = await Lighter.find({ 
+        const history = await Record.find({ 
             lighterNumber: req.params.lighterNumber 
         }).sort({ timestamp: -1 });
         
@@ -172,62 +129,15 @@ app.get('/history/:lighterNumber', async (req, res) => {
 
 app.get('/api/history/:lighterNumber', async (req, res) => {
     try {
-        // 获取所有历史记录并按时间排序
-        const allHistory = await Lighter.find({ lighterNumber: req.params.lighterNumber })
-            .sort({ timestamp: 1 }); // 按时间正序排列
-
-        if (allHistory.length === 0) {
-            return res.json([]);
-        }
-
-        // 为每条记录添加计数
-        const historyWithCount = allHistory.map((record, index) => ({
-            ...record.toObject(),
-            count: index + 1
-        }));
-
-        let selectedHistory = [];
+        const history = await Record.find({ 
+            lighterNumber: req.params.lighterNumber 
+        })
+        .select('source location message timestamp username surroundings') // 确保选择 surroundings 字段
+        .sort({ timestamp: -1 });
         
-        // 1. 添加第一条记录（最早的）
-        selectedHistory.push(historyWithCount[0]);
-
-        // 2. 如果有超过3条记录，添加随机的中间记录
-        if (allHistory.length > 3) {
-            // 排除第一条和最后两条记录
-            const middleRecords = historyWithCount.slice(1, -2);
-            // 计算需要随机选择的数量（最多4条）
-            const randomCount = Math.min(4, middleRecords.length);
-            
-            // 随机选择记录
-            const randomIndices = new Set();
-            while (randomIndices.size < randomCount) {
-                const randomIndex = Math.floor(Math.random() * middleRecords.length);
-                randomIndices.add(randomIndex);
-            }
-            
-            // 添加随机选择的记录
-            [...randomIndices].forEach(index => {
-                selectedHistory.push(middleRecords[index]);
-            });
-        } else if (allHistory.length > 1) {
-            // 如果记录数在2-3条之间，添加所有中间记录
-            selectedHistory = selectedHistory.concat(historyWithCount.slice(1, -1));
-        }
-
-        // 3. 添加最后两条记录（如果存在）
-        if (allHistory.length >= 2) {
-            selectedHistory.push(historyWithCount[historyWithCount.length - 2]); // 倒数第二条
-        }
-        if (allHistory.length >= 1) {
-            selectedHistory.push(historyWithCount[historyWithCount.length - 1]); // 最后一条
-        }
-
-        // 确保最多返回6条记录
-        selectedHistory = selectedHistory.slice(0, 6);
-
-        res.json(selectedHistory);
+        res.json(history);
     } catch (err) {
-        console.error('获取历史记录错误:', err);
+        console.error('获取历史记录失败:', err);
         res.status(500).json({ error: '获取历史记录失败' });
     }
 });
@@ -291,7 +201,7 @@ app.get('/form', (req, res) => {
 // 获取使用次数API
 app.get('/api/usage-count/:lighterNumber', async (req, res) => {
     try {
-        const count = await Lighter.countDocuments({ 
+        const count = await Record.countDocuments({ 
             lighterNumber: req.params.lighterNumber 
         });
         res.json({ count });
@@ -303,7 +213,7 @@ app.get('/api/usage-count/:lighterNumber', async (req, res) => {
 // 获取最后位置API
 app.get('/api/last-location/:lighterNumber', async (req, res) => {
     try {
-        const lastRecord = await Lighter.findOne({ 
+        const lastRecord = await Record.findOne({ 
             lighterNumber: req.params.lighterNumber 
         })
         .sort({ timestamp: -1 })

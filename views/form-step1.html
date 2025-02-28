@@ -21,7 +21,7 @@
             </div>
             <div class="form-group">
                 <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
-                <input type="text" id="location" name="location" placeholder="例如：北京胡同、上海外滩...">
+                <input type="text" id="location" name="location" placeholder="例如：北京青年路、深圳华侨城...">
             </div>
             <button class="next-step" onclick="nextStep()">下一步</button>
         </div>
@@ -33,5 +33,6 @@
             window.location.href = `/form-step2?number=${lighterNumber}&location=${encodeURIComponent(location)}`;
         }
     </script>
+    <script src="/js/background.js"></script>
 </body>
 </html> 

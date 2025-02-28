@@ -91,7 +91,7 @@ function showHistoryPreview(data) {
         historyItem.innerHTML = `
             <p class="pixel-text"><strong>时间：</strong>${new Date(item.timestamp).toLocaleString()}</p>
             <p class="pixel-text"><strong>来源：</strong>${item.source || '未知'}</p>
-            <p class="pixel-text"><strong>留言：</strong>${item.message || '无'}</p>
+            <p class="pixel-text"><strong>说到：</strong>${item.message || '无'}</p>
             <p class="pixel-text"><strong>使用地点：</strong>${item.location || '未知'}</p>
         `;
         previewList.appendChild(historyItem);
@@ -227,14 +227,30 @@ function getLocalIP() {
 
 // 修改提交逻辑
 function submitForm() {
+    if (isSubmitting) return;
+    if (!validateFormStep3()) return;
+
+    isSubmitting = true;
+    submitBtn.disabled = true;
+    spinner.style.display = 'inline-block';
+    submitBtn.querySelector('span').style.visibility = 'hidden';
+
+    const urlParams = new URLSearchParams(window.location.search);
     const formData = {
-        lighterNumber: document.getElementById('lighterNumber').value,
-        source: document.getElementById('source').value,
-        location: document.getElementById('location').value,
-        surroundings: document.getElementById('surroundings').value,
-        message: document.getElementById('message').value,
-        username: document.getElementById('username').value
+        lighterNumber: urlParams.get('number'),
+        location: urlParams.get('location'),
+        source: urlParams.get('source'),
+        username: urlParams.get('username'),
+        surroundings: urlParams.get('surroundings'),
+        message: document.getElementById('message').value.trim()
     };
+
+    // 验证所有必填字段
+    if (!formData.lighterNumber || !formData.location || !formData.source || !formData.message) {
+        showError('请填写所有必填字段');
+        resetSubmitButton();
+        return;
+    }
 
     fetch('/submit', {
         method: 'POST',
@@ -243,14 +259,30 @@ function submitForm() {
         },
         body: JSON.stringify(formData)
     })
-    .then(response => response.json())
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '提交失败');
+        return data;
+    })
     .then(data => {
         if (data.success) {
             window.location.href = '/success';
         } else {
-            alert('提交失败，请重试');
+            throw new Error('提交失败');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError(error.message || '提交失败，请重试');
+        resetSubmitButton();
     });
+}
+
+function resetSubmitButton() {
+    isSubmitting = false;
+    submitBtn.disabled = false;
+    spinner.style.display = 'none';
+    submitBtn.querySelector('span').style.visibility = 'visible';
 }
 
 // 修改步骤切换逻辑
@@ -284,4 +316,24 @@ function showStep(step) {
             el.classList.add('active');
         }
     });
+}
+
+// 添加统一的错误处理函数
+function showError(message, duration = 5000) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert error pixel-text';
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    
+    // 移除已存在的错误提示
+    const existingError = document.querySelector('.alert.error');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    document.querySelector('.form-container').prepend(errorDiv);
+    
+    setTimeout(() => {
+        errorDiv.classList.add('fade-out');
+        setTimeout(() => errorDiv.remove(), 300);
+    }, duration);
 } 

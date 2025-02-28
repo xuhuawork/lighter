@@ -259,11 +259,16 @@ button.loading::after {
     position: relative;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
 }
 
 /* 历史记录内容区域 */
 .history-content {
     flex: 1;
+    position: relative;
+    overflow: hidden;  /* 确保火星不会溢出容器 */
 }
 
 /* 历史记录签名区域 */
@@ -272,16 +277,20 @@ button.loading::after {
     margin-top: 16px;
     padding-top: 16px;
     border-top: 2px solid rgba(155, 188, 15, 0.2);
+    font-size: 12px;
+    color: #8bac0f;
 }
 
-/* 用户名样式 */
-.history-item .username {
-    font-style: italic;
-    color: #9bbc0f;
-    font-size: 12px;
-    text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
+.history-signature .username {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.history-signature .username::before {
+    content: '';
     margin: 0;
-    padding: 0;
 }
 
 /* 历史记录文字样式 */
@@ -469,7 +478,7 @@ textarea:focus {
 }
 
 .usage-count {
-    font-size: calc(var(--text-font-size) + 2px); /* 增大2px */
+    font-size: calc(var(--text-font-size) + 1); /* 增大1px */
     line-height: 1.4;
     margin: 16px 0;
     font-family: 'FusionPixel', monospace;
@@ -1536,5 +1545,151 @@ p.pixel-text {
     }
     50% {
         transform: translateY(-8px);
+    }
+}
+
+.larger-font {
+    font-size: calc(var(--text-font-size) + 1px);
+}
+
+.larger-font .pixel-text {
+    font-size: calc(var(--text-font-size) + 1px);
+}
+
+.history-signature .username {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.history-signature .username::before {
+    content: '';
+    margin: 0;
+}
+
+.history-signature .surroundings {
+    color: #8bac0f;  /* 稍微淡一点的颜色 */
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* 在小屏幕上调整显示 */
+@media screen and (max-width: 480px) {
+    .history-signature .username {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+    }
+    
+    .history-signature .surroundings {
+        font-size: calc(var(--text-font-size) - 1px);  /* 稍微小一点的字体 */
+    }
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #306230;
+    border-top: 3px solid #9bbc0f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #8bac0f;
+    font-size: 16px;
+}
+
+.alert.error {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.alert.error.fade-out {
+    opacity: 0;
+}
+
+/* 火星粒子容器 */
+.sparks-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 火星粒子动画 */
+@keyframes spark {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(0);
+        opacity: 0;
+    }
+}
+
+/* 火星粒子样式 */
+.spark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #ffac33;
+    border-radius: 50%;
+    box-shadow: 
+        0 0 3px #ffac33,
+        0 0 6px #ff9900;
+    animation: spark 2s ease-out forwards;
+}
+
+/* 添加内容区域的火星效果样式 */
+.history-content {
+    position: relative;
+    overflow: hidden;  /* 确保火星不会溢出容器 */
+}
+
+/* 内容区域的火星样式 */
+.content-spark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #ffac33;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* 内容区域火星动画 */
+@keyframes contentSpark {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(var(--moveX), var(--moveY)) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(var(--moveX) * 2), calc(var(--moveY) * 2)) scale(0.3);
     }
 } 

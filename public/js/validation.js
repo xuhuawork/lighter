@@ -66,4 +66,62 @@ style.innerHTML = `
         100% { transform: translateX(0); }
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);
+
+function validateFormStep3() {
+    const message = document.getElementById('message').value.trim();
+    
+    if (message.length < 10) {
+        alert('故事内容至少需要10个字符');
+        return false;
+    }
+    
+    if (message.length > 500) {
+        alert('故事内容不能超过500个字符');
+        return false;
+    }
+    
+    return true;
+}
+
+// 修改提交函数
+function submitForm() {
+    if (!validateFormStep3()) return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const formData = {
+        lighterNumber: urlParams.get('number'),
+        location: urlParams.get('location'),
+        source: urlParams.get('source'),
+        username: urlParams.get('username'),
+        surroundings: urlParams.get('surroundings'),
+        message: document.getElementById('message').value
+    };
+
+    fetch('/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/success';
+        } else {
+            alert('提交失败，请重试');
+        }
+    });
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert error pixel-text';
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    document.querySelector('.form-container').prepend(errorDiv);
+    
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+} 
