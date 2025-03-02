@@ -62,7 +62,9 @@ h1 i {
 }
 
 .form-group {
-    margin-bottom: 0;
+    width: 100%;
+    margin-bottom: 16px;
+    position: relative;
 }
 
 .form-group label {
@@ -91,17 +93,19 @@ label i {
 input[type="number"],
 input[type="text"],
 textarea {
-    background: #9bbc0f;
-    border: 2px solid #0f380f;
-    color: #0f380f; /* 默认文字颜色 */
-    padding: 12px;
     width: 100%;
+    min-width: 0;  /* 防止内容溢出 */
     box-sizing: border-box;
+    background: #306230;  /* 改回深绿色背景 */
+    border: 2px solid #0f380f;
+    color: #9bbc0f;  /* 改回浅绿色文字 */
+    padding: 8px;  /* 减小内边距 */
     font-family: 'FusionPixel', monospace;
     font-size: 12px;
     text-shadow: none;
     transition: all 0.3s ease;
-    position: relative;
+    height: auto;
+    line-height: normal;
 }
 
 /* 输入框填写时的样式 */
@@ -228,19 +232,20 @@ button.loading::after {
 
 /* 历史记录标题样式 */
 .history-container h1 {
-    font-size: 24px;
+    font-size: 24px !important;  /* 改回24px，并添加!important */
     margin-bottom: 40px;
     padding-bottom: 16px;
     border-bottom: 2px solid rgba(155, 188, 15, 0.2);
     text-align: center;
     color: #9bbc0f;
+    text-shadow: 2px 2px #0f380f;
 }
 
 /* 历史记录列表容器 */
 #historyList {
     display: grid;
-    grid-gap: 24px;
-    padding: 24px;
+    grid-gap: 12px;
+    padding: 16px;
     background: #1f4f1f;
     border: 3px solid #0f380f;
     box-shadow: 
@@ -252,7 +257,7 @@ button.loading::after {
 .history-item {
     background: #306230;
     border: 3px solid #0f380f;
-    padding: 24px;
+    padding: 16px;
     box-shadow: 
         0 4px 0 #0f380f,
         inset 0 0 0 2px rgba(155, 188, 15, 0.1);
@@ -262,42 +267,44 @@ button.loading::after {
     opacity: 0;
     transform: translateY(20px);
     animation: fadeInUp 0.5s ease forwards;
+    margin-bottom: 12px;
 }
 
 /* 历史记录内容区域 */
-.history-content {
+.history-item .history-content {
     flex: 1;
     position: relative;
-    overflow: hidden;  /* 确保火星不会溢出容器 */
+    overflow: hidden;
+    padding: 4px 0 !important;  /* 添加 !important 确保覆盖 */
 }
 
 /* 历史记录签名区域 */
-.history-signature {
+.history-item .history-signature {
     text-align: right;
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 8px !important;
+    padding-top: 8px !important;
     border-top: 2px solid rgba(155, 188, 15, 0.2);
-    font-size: var(--text-font-size);
+    font-size: calc(var(--text-font-size) + 2px);  /* 增加2px */
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 8px;
-    padding: 8px 0 0 0;
+    padding: 4px 0 0 0 !important;
 }
 
-.history-signature .username {
+.history-item .history-signature .username {
     font-style: italic;
     color: #9bbc0f;
     text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
     margin: 0;
-    font-size: calc(var(--text-font-size) + 2px); /* 增加1个像素 */
+    font-size: calc(var(--text-font-size) + 3px);  /* 增加3px */
 }
 
 /* 历史记录文字样式 */
 .history-item p {
-    margin: 12px 0;
-    font-size: 14px;
-    line-height: 1.6;
+    margin: 7px 0 !important;
+    font-size: 17px !important;
+    line-height: 1.4 !important;
     color: #9bbc0f;
 }
 
@@ -305,7 +312,7 @@ button.loading::after {
 .history-item strong {
     color: #9bbc0f;
     margin-right: 12px;
-    font-size: 14px;
+    font-size: 14px;  /* 从14px增加到16px */
     text-shadow: 1px 1px 0 rgba(15, 56, 15, 0.5);
 }
 
@@ -598,20 +605,6 @@ form {
     grid-gap: 32px;  /* 增加表单项间距 */
 }
 
-/* 输入框样式优化 */
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-    background: #306230;
-    border: 3px solid #0f380f;
-    color: #9bbc0f;
-    padding: 16px;
-    box-shadow: 
-        0 4px 0 #0f380f,
-        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
-}
-
 /* 标签样式优化 */
 .form-group label {
     font-size: 14px;  /* 增大标签字体 */
@@ -667,24 +660,25 @@ textarea {
 
 /* 修改选择框样式 */
 select {
-    background: #9bbc0f;
-    border: 2px solid #0f380f;
-    color: #0f380f;
-    padding: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: 'FusionPixel', monospace;
-    font-size: 12px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    cursor: pointer;
-    /* 添加新样式 */
-    box-shadow: inset 0 0 0 2px rgba(15, 56, 15, 0.1);
-    transition: all 0.2s ease;
+    background: #306230;  /* 改回深绿色背景 */
+    color: #9bbc0f;  /* 改回浅绿色文字 */
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 2px solid #0f380f;
+    padding: 8px;
+    font-family: 'FusionPixel', monospace;
+    font-size: 12px;
+    text-shadow: none;
+    transition: all 0.3s ease;
+    height: auto;  /* 移除固定高度 */
+    line-height: normal;  /* 移除固定行高 */
 }
 
-/* 聚焦状态 */
+/* 下拉框聚焦时的样式 */
 select:focus {
     outline: none;
     background: #8bac0f;
@@ -692,20 +686,11 @@ select:focus {
     box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.3);
 }
 
-/* 添加自定义下拉箭头 */
-.select-wrapper {
-    position: relative;
-}
-
-.select-wrapper::after {
-    content: '▼';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #0f380f;
-    font-size: 10px;
+/* 下拉选项样式 */
+select option {
+    background: #306230;  /* 改回深绿色背景 */
+    color: #9bbc0f;  /* 改回浅绿色文字 */
+    padding: 8px;
 }
 
 /* 移除 IE 的下拉箭头 */
@@ -729,133 +714,107 @@ select::-ms-expand {
     backdrop-filter: blur(4px);
 }
 
+/* 分享卡片容器 */
+.share-card-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 31, 15, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
 /* 分享卡片样式 */
 .share-card {
     background: #306230;
     border: 4px solid #0f380f;
-    padding: 24px;
-    width: 360px;
     box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.3),
         0 0 0 4px #306230,
-        inset 0 0 20px rgba(15, 56, 15, 0.5);
-    animation: slideUp 0.3s ease;
-    image-rendering: pixelated;
-    transform-style: preserve-3d;
-}
-
-.share-card-content {
-    text-align: center;
+        inset 0 0 20px rgba(15, 56, 15, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.3);
     padding: 24px;
-    background: #9bbc0f;
-    border: 4px solid #0f380f;
-    image-rendering: pixelated;
-    letter-spacing: 1px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    animation: slideUp 0.4s ease;
 }
 
-.card-header {
-    margin-bottom: 24px;
-    border-bottom: 2px solid #0f380f;
-    padding-bottom: 16px;
-}
-
-.share-card h2 {
-    font-size: 24px;
-    margin: 0;
-    color: #0f380f;
-    text-shadow: 
-        2px 0 0 #9bbc0f,
-        -2px 0 0 #9bbc0f,
-        0 2px 0 #9bbc0f,
-        0 -2px 0 #9bbc0f;
-    -webkit-font-smoothing: none;
-    font-smooth: never;
-}
-
-.share-info {
-    margin: 24px 0;
-    padding: 16px;
-    background: rgba(48, 98, 48, 0.1);
-    border: 2px solid #0f380f;
-    box-shadow: inset 2px 2px 0 rgba(15, 56, 15, 0.2);
-}
-
-.share-info p {
-    margin: 12px 0;
-    color: #0f380f;
-    font-size: 16px;
-    line-height: 1.6;
-    word-break: break-word;
-    text-shadow: 1px 1px 0 rgba(155, 188, 15, 0.5);
-}
-
-.share-info .location {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 16px;
-    text-shadow: 
-        1px 1px 0 #9bbc0f,
-        -1px -1px 0 #9bbc0f;
-}
-
-.share-info .message {
-    padding: 12px;
-    background: rgba(15, 56, 15, 0.05);
-    border-radius: 4px;
-    box-shadow: inset 0 0 4px rgba(15, 56, 15, 0.1);
-}
-
-.share-footer {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 2px solid #0f380f;
-}
-
-.share-footer p {
-    font-size: 14px;
-    color: #0f380f;
-    text-shadow: 1px 1px 0 rgba(155, 188, 15, 0.7);
-    margin-top: 8px;
-}
-
-.qr-placeholder {
-    width: 100px;
-    height: 100px;
-    margin: 16px auto;
-    background: #0f380f;
-    border: 2px solid #0f380f;
-}
-
-.share-btn {
-    background: #0f380f;
+/* 分享卡片标题 */
+.share-card-title {
+    font-size: 20px;
     color: #9bbc0f;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px #0f380f;
+    border-bottom: 2px solid rgba(155, 188, 15, 0.2);
+    padding-bottom: 12px;
+}
+
+/* 分享卡片内容 */
+.share-card-content {
+    background: #1f4f1f;
+    border: 3px solid #0f380f;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: inset 0 0 20px rgba(15, 56, 15, 0.5);
+}
+
+/* 分享卡片信息项 */
+.share-info-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 14px;
+    color: #9bbc0f;
+}
+
+.share-info-item i {
+    width: 24px;
+    margin-right: 12px;
+    text-align: center;
+    color: #8bac0f;
+}
+
+/* 分享按钮组 */
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.share-button {
+    background: #0f380f;
     border: none;
-    padding: 16px 32px;
+    padding: 12px;
+    color: #9bbc0f;
     font-family: 'FusionPixel', monospace;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     cursor: pointer;
-    margin: 16px;
     transition: all 0.2s ease;
-    border: 2px solid #0f380f;
-    box-shadow: 
-        0 4px 0 #0f380f,
-        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+    box-shadow: 0 4px 0 #081f0f;
 }
 
-.share-btn:hover {
+.share-button:hover {
+    background: #306230;
     transform: translateY(-2px);
-    box-shadow: 
-        0 6px 0 #0f380f,
-        inset 0 0 0 2px rgba(155, 188, 15, 0.2);
 }
 
-.share-btn:active {
+.share-button:active {
     transform: translateY(2px);
-    box-shadow: 
-        0 2px 0 #0f380f,
-        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+    box-shadow: 0 2px 0 #081f0f;
 }
 
+/* 分享卡片动画 */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -864,11 +823,39 @@ select::-ms-expand {
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* 成功提示动画 */
+.share-success {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #306230;
+    padding: 16px 32px;
+    border: 3px solid #0f380f;
+    color: #9bbc0f;
+    font-size: 16px;
+    animation: popIn 0.3s ease;
+    box-shadow: 
+        0 4px 0 #0f380f,
+        inset 0 0 0 2px rgba(155, 188, 15, 0.1);
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
@@ -901,10 +888,8 @@ form {
 input[type="text"],
 input[type="number"],
 select {
-    height: 44px;  /* 统一高度 */
-    padding: 0 12px;  /* 统一内边距 */
+    padding: 8px;  /* 统一内边距 */
     font-size: 12px;  /* 统一字体大小 */
-    line-height: 44px;  /* 文字垂直居中 */
 }
 
 /* 确保文本框占满整行 */
@@ -947,7 +932,7 @@ select {
 .form-group {
     background: #1f4f1f;
     border: 3px solid #0f380f;
-    padding: 20px;
+    padding: 16px;  /* 减小内边距 */
     margin-bottom: 16px;
     box-shadow: 
         inset 0 0 20px rgba(15, 56, 15, 0.5),
@@ -988,8 +973,8 @@ textarea:focus {
     input[type="text"],
     textarea,
     select {
-        font-size: 16px; /* 增大移动端字体，防止自动缩放 */
-        padding: 12px;
+        font-size: 16px;  /* 移动端增大字体，防止自动缩放 */
+        padding: 6px;  /* 减小内边距 */
     }
 
     .form-group {
@@ -1561,7 +1546,7 @@ p.pixel-text {
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
-    font-size: calc(var(--text-font-size) + 1px);
+    font-size: calc(var(--text-font-size) + 3px);  /* 增加3px */
 }
 
 .history-signature .surroundings {

@@ -14,8 +14,15 @@ function validateForm(form) {
     numberInput.classList.remove('error');
     messageInput.classList.remove('error');
 
-    // 检查打火机编号
-    if (numberInput.value < 1 || numberInput.value > 25) {
+    // 检查打火机编号格式
+    if (!numberInput.value || isNaN(numberInput.value)) {
+        numberInput.classList.add('error');
+        errorAlert.textContent = '打火机编号必须是数字';
+        errorAlert.style.display = 'flex';
+        isValid = false;
+    }
+    // 检查打火机编号范围
+    else if (numberInput.value < 1 || numberInput.value > 25) {
         numberInput.classList.add('error');
         errorAlert.textContent = '打火机编号必须在1-25之间';
         errorAlert.style.display = 'flex';
@@ -23,14 +30,28 @@ function validateForm(form) {
     }
 
     // 检查必填字段
-    if (!sourceInput.value.trim() || !messageInput.value.trim() || !locationInput.value.trim()) {
-        errorAlert.textContent = '请填写所有必填项';
+    if (!sourceInput.value.trim()) {
+        sourceInput.classList.add('error');
+        errorAlert.textContent = '请选择获取来源';
         errorAlert.style.display = 'flex';
         isValid = false;
     }
 
+    if (!locationInput.value.trim()) {
+        locationInput.classList.add('error');
+        errorAlert.textContent = '请填写你所在的地点';
+        errorAlert.style.display = 'flex';
+        isValid = false;
+    }
+
+    if (!messageInput.value.trim()) {
+        messageInput.classList.add('error');
+        errorAlert.textContent = '请填写你的故事';
+        errorAlert.style.display = 'flex';
+        isValid = false;
+    }
     // 检查故事字数
-    if (messageInput.value.trim().length < 10) {
+    else if (messageInput.value.trim().length < 10) {
         messageInput.classList.add('error');
         errorAlert.textContent = '请分享至少10个字符的故事';
         errorAlert.style.display = 'flex';
@@ -43,6 +64,13 @@ function validateForm(form) {
         errorAlert.textContent = '名字不能超过20个字符';
         errorAlert.style.display = 'flex';
         isValid = false;
+    }
+
+    // 添加错误提示的自动消失
+    if (!isValid) {
+        setTimeout(() => {
+            errorAlert.style.display = 'none';
+        }, 3000);
     }
 
     return isValid;
