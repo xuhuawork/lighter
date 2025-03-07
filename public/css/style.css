@@ -1673,4 +1673,124 @@ button:disabled {
         opacity: 0;
         transform: translate(calc(var(--moveX) * 2), calc(var(--moveY) * 2)) scale(0.3);
     }
+}
+
+/* 历史记录说明文字样式 */
+.history-note {
+    display: none; /* 初始隐藏 */
+    text-align: center;
+    margin: 24px 0;
+    padding: 16px;
+    background: #1f4f1f;
+    border: 2px solid #0f380f;
+    color: #8bac0f;
+    font-size: 14px;
+    line-height: 1.6;
+    box-shadow: inset 0 0 20px rgba(15, 56, 15, 0.5);
+}
+
+/* 开发者页面特殊样式 */
+.dev-note {
+    text-align: center;
+    margin: 24px 0;
+    padding: 8px;
+    background: #1f4f1f;
+    border: 2px solid #0f380f;
+    color: #8bac0f;
+    font-size: 12px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(155, 188, 15, 0.2);
+}
+
+.lighter-number {
+    color: #9bbc0f;
+    font-weight: bold;
+}
+
+.error-message {
+    text-align: center;
+    color: #ff6b6b;
+    padding: 20px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 2px solid #ff6b6b;
+}
+
+/* 筛选控件样式 */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(15, 56, 15, 0.2);
+    border: 2px solid #0f380f;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    color: #8bac0f;
+    font-size: 14px;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #0f380f;
+    color: #9bbc0f;
+    font-family: 'FusionPixel', monospace;
+}
+
+.pixel-button {
+    padding: 8px 15px;
+    background: #0f380f;
+    border: 2px solid #306230;
+    color: #8bac0f;
+    cursor: pointer;
+    font-family: 'FusionPixel', monospace;
+    align-self: flex-end;
+    transition: all 0.2s;
+}
+
+.pixel-button:hover {
+    background: #306230;
+    color: #e0f8cf;
+}
+
+.filter-result-count {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background: rgba(155, 188, 15, 0.2);
+    color: #9bbc0f;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        margin-bottom: 10px;
+    }
+    
+    .pixel-button {
+        width: 100%;
+    }
 } 

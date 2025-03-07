@@ -1,3 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const path = require('path');
+const Record = require('../models/Record');
+
 // 添加新的路由
 router.get('/form-step1', (req, res) => {
     res.render('form-step1');
@@ -9,6 +14,16 @@ router.get('/form-step2', (req, res) => {
 
 router.get('/form-step3', (req, res) => {
     res.render('form-step3');
+});
+
+// 添加结束旅程页面路由
+router.get('/endjourney', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'views', 'endjourney.html'));
+});
+
+// 添加历史页面路由
+router.get('/history/:lighterNumber', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'views', 'history.html'));
 });
 
 // 修改提交路由
@@ -60,4 +75,27 @@ router.get('/api/history/:lighterNumber', async (req, res) => {
         console.error('获取历史记录失败:', err);
         res.status(500).json({ error: '获取历史记录失败' });
     }
-}); 
+});
+
+// 修改 newhistory 路由
+router.get('/newhistory', (req, res) => {
+    const filePath = path.join(__dirname, '..', 'views', 'newhistory.html');
+    console.log('尝试发送文件:', filePath); // 添加日志
+    res.sendFile(filePath);
+});
+
+// 简化 API 路由
+router.get('/api/newhistory', async (req, res) => {
+    try {
+        // 获取所有记录，不限制日期
+        const records = await Record.find({})
+            .sort({ timestamp: -1 });
+        
+        res.json(records);
+    } catch (err) {
+        console.error('获取历史记录失败:', err);
+        res.status(500).json({ error: '获取历史记录失败' });
+    }
+});
+
+module.exports = router; 

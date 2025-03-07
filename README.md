@@ -50,16 +50,25 @@ npm start
 README.md
 lighter-tracking/
 ├── app.js # 应用入口和主要逻辑
+├── models/ # 数据模型
+│ └── Record.js # 打火机记录模型
+├── routes/ # 路由文件
+│ └── index.js # 主路由
 ├── views/ # 页面模板
-│ ├── welcome.html # 欢迎页面
-│ ├── index.html # 表单页面
-│ └── history.html # 历史记录页面
+│ ├── index.html # 主页面
+│ ├── form-step1.html # 表单步骤1
+│ ├── form-step2.html # 表单步骤2
+│ ├── form-step3.html # 表单步骤3
+│ ├── history.html # 单个打火机历史
+│ └── newhistory.html # 全部历史记录页面
 ├── public/ # 静态资源
 │ ├── css/
 │ │ └── style.css # 样式文件
 │ └── js/
 │ ├── form.js # 表单处理
-│ └── validation.js # 表单验证
+│ ├── validation.js # 表单验证
+│ ├── history.js # 历史记录处理
+│ └── background.js # 背景动画效果
 └── package.json # 项目配置
 
 ## API 接口
@@ -70,8 +79,19 @@ lighter-tracking/
 ### GET /history/:lighterNumber
 获取特定打火机的历史记录
 
+### GET /api/newhistory
+获取所有打火机的历史记录
+
 ### GET /api/usage-count/:lighterNumber
 获取特定打火机的使用次数
+
+## 页面说明
+
+- `/form-step1` - 记录打火机编号和位置
+- `/form-step2` - 记录来源和用户信息
+- `/form-step3` - 记录留言和提交
+- `/history/:lighterNumber` - 查看特定打火机的历史
+- `/newhistory` - 开发者页面，查看所有记录
 
 ## 贡献指南
 

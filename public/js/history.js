@@ -70,8 +70,14 @@ function addContentSparks(contentElement) {
 
 function showHistoryPreview(data) {
     const previewList = document.getElementById('historyList');
+    const historyNote = document.querySelector('.history-note');
+
+    // 先隐藏提示信息
+    historyNote.style.display = 'none';
+
+    // 清空现有内容
     previewList.innerHTML = '';
-    
+
     if (data.length === 0) {
         previewList.innerHTML = '<div class="empty-state pixel-text">暂无历史记录</div>';
         return;
@@ -83,45 +89,38 @@ function showHistoryPreview(data) {
     // 选择要显示的记录
     let selectedRecords = new Set(); // 使用 Set 来避免重复
     
-    // 1. 添加第一条记录（最早的）
-    selectedRecords.add(sortedData[sortedData.length - 1]);
+    // 1. 添加最新的故事
+    selectedRecords.add(sortedData[0]);
     
-    // 2. 如果有超过3条记录，添加随机的中间记录（最多4条）
-    if (sortedData.length > 3) {
-        // 排除第一条和最后两条记录
-        const middleRecords = sortedData.slice(1, -2);
-        // 计算需要随机选择的数量（最多4条）
-        const randomCount = Math.min(4, middleRecords.length);
-        
-        // 创建可选记录的索引数组
-        const availableIndices = Array.from({ length: middleRecords.length }, (_, i) => i);
-        
-        // 随机选择不重复的记录
-        for (let i = 0; i < randomCount && availableIndices.length > 0; i++) {
-            // 随机选择一个索引位置
-            const randomPosition = Math.floor(Math.random() * availableIndices.length);
-            // 获取并移除选中的索引
-            const selectedIndex = availableIndices.splice(randomPosition, 1)[0];
-            // 添加对应的记录
-            selectedRecords.add(middleRecords[selectedIndex]);
-        }
-    } else if (sortedData.length > 1) {
-        // 如果记录数在2-3条之间，添加所有中间记录
-        sortedData.slice(1, -1).forEach(record => selectedRecords.add(record));
+    // 2. 添加最新故事的上一条（如果存在）
+    if (sortedData.length > 1) {
+        selectedRecords.add(sortedData[1]);
     }
     
-    // 3. 添加最后两条记录（如果存在）
-    if (sortedData.length >= 2) {
-        selectedRecords.add(sortedData[1]); // 倒数第二条
-        selectedRecords.add(sortedData[0]); // 最新一条
+    // 3. 添加最初的故事（如果不是已经添加的记录）
+    const firstStory = sortedData[sortedData.length - 1];
+    if (!selectedRecords.has(firstStory)) {
+        selectedRecords.add(firstStory);
+    }
+    
+    // 4. 如果还有空位，从剩余记录中随机选择
+    if (sortedData.length > 3) {
+        const remainingRecords = sortedData.slice(2, -1); // 排除已选择的记录
+        const remainingCount = Math.min(2, remainingRecords.length); // 最多选择2条
+        
+        for (let i = 0; i < remainingCount; i++) {
+            const randomIndex = Math.floor(Math.random() * remainingRecords.length);
+            const randomRecord = remainingRecords[randomIndex];
+            if (!selectedRecords.has(randomRecord)) {
+                selectedRecords.add(randomRecord);
+                remainingRecords.splice(randomIndex, 1); // 移除已选记录
+            }
+        }
     }
     
     // 转换为数组并按时间排序
     let selectedArray = Array.from(selectedRecords);
     selectedArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
-    // 确保最多显示7条记录
-    selectedArray = selectedArray.slice(0, 7);
 
     // 显示选中的记录
     selectedArray.forEach((item, index) => {
@@ -136,7 +135,7 @@ function showHistoryPreview(data) {
         if (index === selectedArray.length - 1 && item === sortedData[sortedData.length - 1]) {
             timeLabel = '<span class="time-label first">最初的故事 #1</span>';
         } else if (index === 0) {
-            timeLabel = '<span class="time-label latest">最新故事</span>';
+            timeLabel = '<span class="time-label latest">最新传承</span>';
         } else {
             const storyNumber = sortedData.length - sortedData.indexOf(item);
             timeLabel = `<span class="time-label">故事 #${storyNumber}</span>`;
@@ -162,6 +161,9 @@ function showHistoryPreview(data) {
         const contentElement = historyItem.querySelector('.history-content');
         addContentSparks(contentElement);
     });
+
+    // 数据加载完成后显示提示信息
+    historyNote.style.display = 'block';
 }
 
 function formatDate(timestamp) {
@@ -181,6 +183,6 @@ function getTimeLabel(index, total) {
     }
     const storyNumber = total - index;
     return `<span class="time-label ${index === 0 ? 'latest' : ''}">${
-        index === 0 ? '最新故事' : `故事 #${storyNumber}`
+        index === 0 ? '最新传承' : `故事 #${storyNumber}`
     }</span>`;
 } 

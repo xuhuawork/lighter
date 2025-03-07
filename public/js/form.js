@@ -5,6 +5,142 @@ document.addEventListener('DOMContentLoaded', function() {
     if (lighterNumber) {
         document.getElementById('lighterNumber').value = lighterNumber;
     }
+
+    // 添加分享卡片样式
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .share-card {
+            background: #9bbc0f;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 320px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .share-card-content {
+            background: #306230;
+            border: 4px solid #0f380f;
+            padding: 20px;
+            box-shadow: 
+                0 0 0 4px #306230,
+                inset 0 0 20px rgba(15, 56, 15, 0.5);
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.6em;
+            margin: 0;
+            color: #9bbc0f;
+        }
+        
+        .card-header .subtitle {
+            font-size: 1.1em;
+            margin-top: 8px;
+            color: #9bbc0f;
+            opacity: 0.9;
+        }
+
+        .share-info {
+            margin: 20px 0;
+        }
+
+        .share-info p {
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+        }
+
+        .share-info i {
+            width: 20px;
+            text-align: center;
+            color: #9bbc0f;
+        }
+
+        .countdown {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .screenshot-text {
+            margin: 8px 0;
+            font-size: 1.3em;
+            animation: blink 1.5s infinite;
+            color: #9bbc0f;
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .timer-number {
+            font-size: 2em;
+            color: #9bbc0f;
+            background: rgba(15, 56, 15, 0.5);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .timer-text {
+            font-size: 1.1em;
+            color: #9bbc0f;
+        }
+
+        .pulse-animation {
+            animation: pulse-scale 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulse-scale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
 });
 
 document.querySelector('form').addEventListener('submit', function(e) {
@@ -54,11 +190,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
                 message: data.message,
                 username: data.username
             });
-            
-            // 3秒后再跳转到历史记录页面
-            setTimeout(() => {
-                window.location.href = `/history/${data.lighterNumber}`;
-            }, 3000);
         } else {
             throw new Error(result.error || '提交失败');
         }
@@ -106,93 +237,107 @@ function showShareCard(data) {
     const card = document.createElement('div');
     card.className = 'share-card';
     
-    // 生成分享卡片内容，优化文字长度和换行
-    const truncatedMessage = data.message.length > 50 ? 
-        data.message.substring(0, 50) + '...' : 
-        data.message;
-    
-    card.innerHTML = `
-        <div class="share-card-content pixel-border">
-            <div class="card-header">
-                <h2 class="pixel-text">🔥 流浪火机 #${data.lighterNumber}</h2>
-            </div>
-            <div class="share-info">
-                <p class="location pixel-text"><i class="fas fa-map-marker-alt"></i> ${data.location}</p>
-                <p class="message pixel-text">${truncatedMessage}</p>
-                ${data.username ? `<p class="username pixel-text"><i class="fas fa-user"></i> ${data.username}</p>` : ''}
-            </div>
-            <div class="share-footer pixel-text">
-                <div class="qr-placeholder"></div>
-                <p>- 扫码加入流浪火机的旅程 -</p>
-            </div>
-        </div>
-        <div class="share-actions">
-            <button class="share-btn" onclick="downloadShareCard()">
-                <i class="fas fa-download"></i> 保存图片
-            </button>
-            <p class="share-tip pixel-text">保存图片后分享到社交媒体</p>
-        </div>
-    `;
-    
-    shareModal.appendChild(card);
-    document.body.appendChild(shareModal);
-}
-
-// 优化下载分享卡片功能
-function downloadShareCard() {
-    const card = document.querySelector('.share-card-content');
-    
-    // 设置临时样式以确保正确的输出比例
-    const originalStyle = card.style.cssText;
-    card.style.width = '600px';  // 固定宽度
-    card.style.height = 'auto';
-    card.style.transform = 'scale(1)';
-    
-    html2canvas(card, {
-        scale: 2,  // 调整缩放比例
-        useCORS: true,
-        backgroundColor: '#9bbc0f',
-        logging: false,
-        imageRendering: 'pixelated',  // 确保图片像素化
-        onclone: function(clonedDoc) {
-            const clonedCard = clonedDoc.querySelector('.share-card-content');
-            if (clonedCard) {
-                // 在克隆的文档中应用像素化样式
-                clonedCard.style.imageRendering = 'pixelated';
-                clonedCard.querySelectorAll('*').forEach(el => {
-                    el.style.imageRendering = 'pixelated';
-                    if (el.classList.contains('pixel-text')) {
-                        el.style.textRendering = 'optimizeSpeed';
-                        el.style.webkitFontSmoothing = 'none';
-                        el.style.fontSmooth = 'never';
-                    }
-                });
-            }
-        }
-    }).then(canvas => {
-        // 创建一个新的画布来调整最终输出
-        const finalCanvas = document.createElement('canvas');
-        const ctx = finalCanvas.getContext('2d');
-        
-        // 设置最终输出尺寸
-        finalCanvas.width = 1200;  // 2倍宽度以保持清晰度
-        finalCanvas.height = (canvas.height * 1200) / canvas.width;
-        
-        // 启用像素化渲染
-        ctx.imageSmoothingEnabled = false;
-        
-        // 绘制图像
-        ctx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
-        
-        // 导出图片
-        const link = document.createElement('a');
-        link.download = `流浪火机${document.getElementById('lighterNumber').value}号.png`;
-        link.href = finalCanvas.toDataURL('image/png', 1.0);
-        link.click();
-        
-        // 恢复原始样式
-        card.style.cssText = originalStyle;
+    // 获取格式化的时间
+    const formattedTime = new Date().toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
     });
+    
+    // 获取使用者编号
+    fetch(`/api/history/${data.lighterNumber}`)
+        .then(response => response.json())
+        .then(historyData => {
+            // 计算当前是第几个使用者
+            const userNumber = historyData.length + 1;
+            
+            card.innerHTML = `
+                <div class="share-card-content pixel-border">
+                    <div class="card-header">
+                        <h2 class="pixel-text">🔥 流浪火机 #${data.lighterNumber}</h2>
+                        <p class="subtitle pixel-text">第 ${userNumber} 个使用者</p>
+                    </div>
+                    <div class="share-info">
+                        <p class="location pixel-text"><i class="fas fa-map-marker-alt"></i> ${data.location}</p>
+                        <p class="username pixel-text"><i class="fas fa-user"></i> ${data.username || '匿名用户'}</p>
+                        <p class="time pixel-text"><i class="fas fa-clock"></i> ${formattedTime}</p>
+                    </div>
+                    <div class="countdown pixel-text">
+                        <p class="screenshot-text">请截图保存 ⬇️</p>
+                        <div class="timer-container">
+                            <span class="timer-number">${7}</span>
+                            <span class="timer-text">秒后为您展示历史记录</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            shareModal.appendChild(card);
+            document.body.appendChild(shareModal);
+            
+            // 开始倒计时
+            let secondsLeft = 7;
+            const timerNumber = card.querySelector('.timer-number');
+            const countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    timerNumber.textContent = secondsLeft;
+                    // 添加动画效果
+                    timerNumber.classList.remove('pulse-animation');
+                    void timerNumber.offsetWidth; // 触发重绘
+                    timerNumber.classList.add('pulse-animation');
+                } else {
+                    clearInterval(countdownInterval);
+                    window.location.href = `/history/${data.lighterNumber}`;
+                }
+            }, 1000);
+        })
+        .catch(error => {
+            console.error('获取历史记录失败:', error);
+            // 如果获取历史记录失败，则默认为第1个使用者
+            card.innerHTML = `
+                <div class="share-card-content pixel-border">
+                    <div class="card-header">
+                        <h2 class="pixel-text">🔥 流浪火机 #${data.lighterNumber}</h2>
+                        <p class="subtitle pixel-text">新的旅程开始</p>
+                    </div>
+                    <div class="share-info">
+                        <p class="location pixel-text"><i class="fas fa-map-marker-alt"></i> ${data.location}</p>
+                        <p class="username pixel-text"><i class="fas fa-user"></i> ${data.username || '匿名用户'}</p>
+                        <p class="time pixel-text"><i class="fas fa-clock"></i> ${formattedTime}</p>
+                    </div>
+                    <div class="countdown pixel-text">
+                        <p class="screenshot-text">请截图保存 ⬇️</p>
+                        <div class="timer-container">
+                            <span class="timer-number">${7}</span>
+                            <span class="timer-text">秒后为您展示历史记录</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            shareModal.appendChild(card);
+            document.body.appendChild(shareModal);
+            
+            // 开始倒计时
+            let secondsLeft = 7;
+            const timerNumber = card.querySelector('.timer-number');
+            const countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    timerNumber.textContent = secondsLeft;
+                    // 添加动画效果
+                    timerNumber.classList.remove('pulse-animation');
+                    void timerNumber.offsetWidth; // 触发重绘
+                    timerNumber.classList.add('pulse-animation');
+                } else {
+                    clearInterval(countdownInterval);
+                    window.location.href = `/history/${data.lighterNumber}`;
+                }
+            }, 1000);
+        });
 }
 
 // 更新二维码生成的 URL 格式

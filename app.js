@@ -45,6 +45,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 添加字体文件的静态服务
 app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
 
+// 确保视图引擎正确配置
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'html');
+app.engine('html', require('ejs').renderFile);
+
+// 引入路由
+const indexRouter = require('./routes/index');
+
+// 使用路由
+app.use('/', indexRouter);
+
 // 路由
 app.get('/', (req, res) => {
     res.redirect('/welcome');
@@ -225,10 +236,15 @@ app.get('/api/last-location/:lighterNumber', async (req, res) => {
     }
 });
 
-// 在所有路由之后添加
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: '服务器内部错误' });
+// 添加请求日志中间件
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
+// 确保 404 处理在所有路由之后
+app.use((req, res, next) => {
+    res.status(404).send('页面未找到');
 });
 
 // 确保数据库连接正确

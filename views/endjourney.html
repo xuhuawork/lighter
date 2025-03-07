@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅程继续 - 新火相传</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-container {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .message-card {
+            background: #306230;
+            border: 4px solid #0f380f;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 
+                0 0 0 4px #306230,
+                inset 0 0 20px rgba(15, 56, 15, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .highlight-text {
+            color: #9bbc0f;
+            font-size: 1.3em;
+            margin: 20px 0;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        .next-steps {
+            margin-top: 32px;
+            padding: 20px;
+            background: rgba(155, 188, 15, 0.1);
+            border-radius: 8px;
+        }
+
+        .next-steps ul {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+        }
+
+        .next-steps li {
+            margin: 16px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 1.1em;
+        }
+
+        .next-steps li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #9bbc0f;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 12px 20px;
+            background: #0f380f;
+            color: #9bbc0f;
+            text-decoration: none;
+            border: 2px solid #0f380f;
+            box-shadow: 
+                0 3px 0 #081f0f,
+                inset 0 0 0 1px rgba(155, 188, 15, 0.1);
+            transition: all 0.2s ease;
+            font-family: 'FusionPixel', monospace;
+            min-width: 140px;
+            text-align: center;
+            font-size: 1.2em;
+            letter-spacing: 0.05em;
+            border-radius: 2px;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 0 #081f0f,
+                inset 0 0 0 1px rgba(155, 188, 15, 0.2);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+            box-shadow: 
+                0 2px 0 #081f0f,
+                inset 0 0 0 1px rgba(155, 188, 15, 0.1);
+        }
+
+        .pixel-text {
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        h1.pixel-text {
+            font-size: 1.7em;
+            margin-bottom: 24px;
+        }
+
+        h2.pixel-text {
+            font-size: 1.2em;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(155, 188, 15, 0.5);
+            }
+            to {
+                text-shadow: 0 0 15px rgba(155, 188, 15, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container success-container">
+        <div class="message-card">
+            <h1 class="pixel-text">旅程结束</h1>
+            
+            <p class="highlight-text">
+                你完整了这个火机的一部分！
+            </p>
+            
+            <p class="pixel-text">
+                火机总是要流浪的，<br>
+                你的故事，也成为了它旅程中的一章。
+            </p>
+            
+            <div class="next-steps">
+                <h2 class="pixel-text">接下来...</h2>
+                <ul class="pixel-text">
+                    <li>随便找个理由</li>
+                    <li>郑重其事的将火机传递下去</li>
+                    <li>反正火机总是要丢的，不是么？</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="javascript:history.back()" class="action-button">
+                再次回顾历史记录
+            </a>
+        </div>
+    </div>
+    
+    <script src="/js/background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundAnimation();
+            
+            // 获取查看火机故事按钮
+            const historyButton = document.querySelector('.action-button');
+            
+            // 检查referrer是否包含history路径
+            if (document.referrer && document.referrer.includes('/history/')) {
+                historyButton.href = document.referrer;
+            } else {
+                // 如果没有来自历史页面，尝试从URL获取lighterNumber
+                const urlParams = new URLSearchParams(window.location.search);
+                const lighterNumber = urlParams.get('number');
+                
+                if (lighterNumber) {
+                    historyButton.href = `/history/${lighterNumber}`;
+                } else {
+                    // 如果没有lighterNumber，则使用history.back()
+                    historyButton.href = "javascript:history.back()";
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

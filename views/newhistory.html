@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' data: http: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https:;">
+    <title>今日全部流浪史</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container history-container larger-font">
+        <h1 class="pixel-text">
+            <span class="pixel-icon">🔥</span> 今日全部流浪史
+        </h1>
+        
+        <!-- 添加筛选和排序控件 -->
+        <div class="filter-controls pixel-box">
+            <div class="filter-group">
+                <label for="filterLighter">按打火机编号筛选:</label>
+                <select id="filterLighter">
+                    <option value="all">全部</option>
+                    <!-- 动态生成1-25的选项 -->
+                    <script>
+                        for(let i=1; i<=25; i++) {
+                            document.write(`<option value="${i}">${i}号</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sortOrder">排序方式:</label>
+                <select id="sortOrder">
+                    <option value="newest">最新优先</option>
+                    <option value="oldest">最早优先</option>
+                    <option value="number">按打火机编号</option>
+                </select>
+            </div>
+            <button id="applyFilters" class="pixel-button">
+                <i class="fas fa-filter"></i> 应用筛选
+            </button>
+        </div>
+        
+        <div id="historyList"></div>
+        <p class="pixel-text dev-note">
+            开发者专用页面 | 显示今日所有记录
+        </p>
+    </div>
+    <script>
+        // 添加筛选和排序功能
+        let originalData = [];
+        
+        window.addEventListener('load', function() {
+            fetch('/api/newhistory')
+                .then(response => response.json())
+                .then(data => {
+                    originalData = data; // 保存原始数据
+                    showFullHistory(data);
+                    setupFilters();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('historyList').innerHTML = 
+                        '<p class="error-message">加载历史记录失败，请稍后再试。</p>';
+                });
+        });
+        
+        function setupFilters() {
+            const filterLighter = document.getElementById('filterLighter');
+            const sortOrder = document.getElementById('sortOrder');
+            const applyButton = document.getElementById('applyFilters');
+            
+            // 点击应用按钮时应用筛选
+            applyButton.addEventListener('click', applyFilters);
+            
+            // 下拉框变化时自动应用筛选
+            filterLighter.addEventListener('change', applyFilters);
+            sortOrder.addEventListener('change', applyFilters);
+        }
+        
+        function applyFilters() {
+            const filterLighter = document.getElementById('filterLighter');
+            const sortOrder = document.getElementById('sortOrder');
+            
+            let filteredData = [...originalData];
+            
+            // 应用打火机编号筛选
+            if (filterLighter.value !== 'all') {
+                filteredData = filteredData.filter(item => 
+                    item.lighterNumber == filterLighter.value
+                );
+            }
+            
+            // 应用排序
+            switch(sortOrder.value) {
+                case 'newest':
+                    filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    break;
+                case 'oldest':
+                    filteredData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                    break;
+                case 'number':
+                    filteredData.sort((a, b) => a.lighterNumber - b.lighterNumber);
+                    break;
+            }
+            
+            // 显示筛选后的数据
+            showFullHistory(filteredData);
+            
+            // 显示筛选结果数量
+            const historyList = document.getElementById('historyList');
+            if (filteredData.length > 0) {
+                const resultCount = document.createElement('div');
+                resultCount.className = 'filter-result-count';
+                resultCount.textContent = `找到 ${filteredData.length} 条记录`;
+                historyList.prepend(resultCount);
+            }
+        }
+        
+        function showFullHistory(data) {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (data.length === 0) {
+                historyList.innerHTML = '<div class="empty-state pixel-text">今天还没有新的故事</div>';
+                return;
+            }
+
+            // 为每个打火机编号计算记录次数
+            const lighterCounts = {};
+            
+            // 按打火机编号和时间排序
+            const sortedData = [...data].sort((a, b) => {
+                // 先按打火机编号排序
+                if (a.lighterNumber !== b.lighterNumber) {
+                    return a.lighterNumber - b.lighterNumber;
+                }
+                // 再按时间排序（从早到晚）
+                return new Date(a.timestamp) - new Date(b.timestamp);
+            });
+            
+            // 计算每个打火机的记录次数
+            sortedData.forEach(item => {
+                if (!lighterCounts[item.lighterNumber]) {
+                    lighterCounts[item.lighterNumber] = 0;
+                }
+                lighterCounts[item.lighterNumber]++;
+                
+                // 将记录次数添加到数据中
+                item.recordCount = lighterCounts[item.lighterNumber];
+            });
+            
+            // 根据筛选条件重新排序
+            const filteredData = [...sortedData].sort((a, b) => {
+                const sortOrder = document.getElementById('sortOrder').value;
+                switch(sortOrder) {
+                    case 'newest':
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    case 'oldest':
+                        return new Date(a.timestamp) - new Date(b.timestamp);
+                    case 'number':
+                        return a.lighterNumber - b.lighterNumber;
+                    default:
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                }
+            });
+
+            filteredData.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item pixel-box';
+                historyItem.style.animationDelay = `${index * 0.1}s`;
+
+                historyItem.innerHTML = `
+                    <div class="history-header">
+                        <span class="lighter-number">打火机 #${item.lighterNumber}</span>
+                        <span class="time-label">第 ${item.recordCount} 次报告</span>
+                    </div>
+                    <div class="history-content larger-font">
+                        <p class="pixel-text"><strong>来源：</strong>${item.source || '未知'}</p>
+                        <p class="pixel-text"><strong>记录地点：</strong>${item.location || '未知'}</p>
+                        ${item.surroundings ? `<p class="pixel-text"><strong>现在正在：</strong>${item.surroundings}</p>` : ''}
+                        <p class="pixel-text"><strong>说到：</strong>${item.message || '无'}</p>
+                    </div>
+                    <div class="history-signature larger-font">
+                        <span>${formatDate(item.timestamp)}</span>
+                        <span class="username">${item.username ? `· ${item.username}` : '· 匿名用户'}</span>
+                    </div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return new Intl.DateTimeFormat('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+    <script src="/js/background.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundAnimation();
+        });
+    </script>
+</body>
+</html> 
