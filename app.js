@@ -58,7 +58,7 @@ app.use('/', indexRouter);
 
 // 路由
 app.get('/', (req, res) => {
-    res.redirect('/welcome');
+    res.redirect('/w');
 });
 
 app.post('/submit', async (req, res) => {
@@ -154,23 +154,23 @@ app.get('/api/history/:lighterNumber', async (req, res) => {
 });
 
 // 修改欢迎页面路由
-app.get('/welcome', (req, res) => {
+app.get('/w', (req, res) => {
     console.log('访问欢迎页面');
     const filePath = path.join(__dirname, 'views', 'welcome.html');
     res.sendFile(filePath);
 });
 
-// 修改 /welcome/:number 路由
-app.get('/welcome/:number', (req, res) => {
+// 修改 /w/:number 路由
+app.get('/w/:number', (req, res) => {
     const lighterNumber = parseInt(req.params.number);
     
     // 验证打火机编号
     if (isNaN(lighterNumber) || lighterNumber < 1 || lighterNumber > 25) {
-        return res.redirect('/welcome');
+        return res.redirect('/w');
     }
     
     // 重定向到带查询参数的欢迎页面
-    res.redirect(`/welcome?number=${lighterNumber}`);
+    res.redirect(`/w?number=${lighterNumber}`);
 });
 
 // 修改表单页面路由
@@ -179,7 +179,7 @@ app.get('/form', (req, res) => {
     
     // 验证打火机编号
     if (isNaN(number) || number < 1 || number > 25) {
-        return res.redirect('/welcome');
+        return res.redirect('/w');
     }
     
     // 读取HTML文件

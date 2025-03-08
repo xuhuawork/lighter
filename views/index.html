@@ -6,7 +6,6 @@
     <title>打火机追踪</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
 </head>
 <body>
     <div class="container form-container">
@@ -32,9 +31,9 @@
             <div class="form-step active" data-step="1">
                 <div class="form-group">
                     <label for="lighterNumber" class="pixel-text">
-                        <span class="pixel-icon">▶</span> 火机编号 (1-25)
+                        <span class="pixel-icon">▶</span> 火机编号
+                        &nbsp;&nbsp;<span id="lighterNumber" style="font-size: 1.2em; color: #9bbc0f;"></span>
                     </label>
-                    <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
                 </div>
                 <div class="form-group select-wrapper">
                     <label for="source"><i class="fas fa-info-circle"></i> 获取来源:</label>
@@ -117,8 +116,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             initBackgroundAnimation();
             showStep(1); // 默认显示第一步
+
+            // 获取火机编号
+            const lighterNumber = document.querySelector('span#lighterNumber');
+            if (lighterNumber) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const number = urlParams.get('number');
+                if (number) {
+                    lighterNumber.textContent = number;
+                }
+            }
         });
-        eruda.init();
     </script>
 </body>
 </html> 

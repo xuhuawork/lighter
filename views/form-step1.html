@@ -17,7 +17,9 @@
                 <label for="lighterNumber" class="pixel-text">
                     <span class="pixel-icon">▶</span> 火机编号 (1-25)
                 </label>
-                <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required>
+                <div style="display: flex; align-items: center;">
+                    <input type="number" id="lighterNumber" name="lighterNumber" min="1" max="25" required readonly disabled>
+                </div>
             </div>
             <div class="form-group">
                 <label for="location"><i class="fas fa-map-marker-alt"></i> 你所处何地:</label>
@@ -32,6 +34,45 @@
             const location = document.getElementById('location').value;
             window.location.href = `/form-step2?number=${lighterNumber}&location=${encodeURIComponent(location)}`;
         }
+
+        // 确保火机编号输入框不可编辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const lighterNumberInput = document.getElementById('lighterNumber');
+            
+            // 从URL获取火机编号（如果有）
+            const urlParams = new URLSearchParams(window.location.search);
+            const number = urlParams.get('number');
+            if (number) {
+                lighterNumberInput.value = number;
+            }
+            
+            // 设置为只读
+            lighterNumberInput.setAttribute('readonly', 'readonly');
+            
+            // 添加禁用样式但不实际禁用（保持表单可提交）
+            lighterNumberInput.style.backgroundColor = '#306230';
+            lighterNumberInput.style.color = '#9bbc0f';
+            lighterNumberInput.style.opacity = '0.8';
+            lighterNumberInput.style.cursor = 'not-allowed';
+            
+            // 阻止任何编辑尝试
+            lighterNumberInput.addEventListener('keydown', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // 阻止鼠标滚轮改变数值
+            lighterNumberInput.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // 阻止粘贴操作
+            lighterNumberInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
     </script>
     <script src="/js/background.js"></script>
 </body>

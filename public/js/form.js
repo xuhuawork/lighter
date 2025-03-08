@@ -251,7 +251,7 @@ function showShareCard(data) {
         .then(response => response.json())
         .then(historyData => {
             // 计算当前是第几个使用者
-            const userNumber = historyData.length + 1;
+            const userNumber = historyData.length;
             
             card.innerHTML = `
                 <div class="share-card-content pixel-border">
@@ -355,7 +355,7 @@ function generateQRCode(lighterNumber) {
     }
     
     // 使用新的URL格式
-    return `${baseUrl}/welcome/${lighterNumber}`;
+    return `${baseUrl}/w/${lighterNumber}`;
 }
 
 // 获取本机局域网IP
