@@ -1,25 +1,59 @@
-version: '3.8'
-
 services:
   app:
     build: .
-    ports:
-      - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongodb:27017/lighter
-      - PORT=3000
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/lighter
+      PORT: 3000
+    # 移除公网端口映射，改为只在内部网络可访问
+    # ports:
+    #   - "3000:3000"
     depends_on:
       - mongodb
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mongodb:
     image: mongo:4.4
-    ports:
-      - "27017:27017"
+    platform: linux/arm64
     volumes:
       - mongodb_data:/data/db
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - app
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    restart: unless-stopped
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   mongodb_data: 

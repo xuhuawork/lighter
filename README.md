@@ -27,26 +27,35 @@
 ## 安装说明
 
 1. 克隆仓库
-bash
+```bash
 git clone https://github.com/你的用户名/lighter-tracking.git
 cd lighter-tracking
+```
 
 2. 安装依赖
-bash
+
+```bash
 npm install
+```
 
 3. 配置环境变量
-bash
-cp .env.example .env
 
-MONGODB_URI=mongodb://127.0.0.1:27017/lighter
+```bash
+cp .env.example .env
+```
+
+```bash
+MONGODB_URI=mongodb://mongodb:27017/lighter
 PORT=3000
+```
 
 4. 启动服务器
-bash
+```bash
 npm start
+```
 
 ## 项目结构
+```
 README.md
 lighter-tracking/
 ├── app.js # 应用入口和主要逻辑
@@ -70,6 +79,7 @@ lighter-tracking/
 │ ├── history.js # 历史记录处理
 │ └── background.js # 背景动画效果
 └── package.json # 项目配置
+```
 
 ## API 接口
 

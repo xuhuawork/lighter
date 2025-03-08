@@ -11,7 +11,7 @@ const app = express();
 mongoose.set('strictQuery', false);
 
 // 更详细的数据库连接和错误处理
-mongoose.connect('mongodb://127.0.0.1:27017/lighter', {
+mongoose.connect('mongodb://mongodb:27017/lighter', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000
