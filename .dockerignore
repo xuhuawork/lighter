@@ -21,4 +21,7 @@ logs
 
 # 系统文件
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Nginx 和 Certbot 相关目录
+nginx/certbot 

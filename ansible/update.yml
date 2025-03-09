@@ -1,7 +1,0 @@
----
-- name: 更新流浪火机应用
-  hosts: aws
-  gather_facts: yes
-  
-  tasks:
-    - include_tasks: roles/deploy/tasks/update.yml 

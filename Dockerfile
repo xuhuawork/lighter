@@ -1,6 +1,10 @@
 # 使用 Node.js 18 作为基础镜像
 FROM node:18-slim
 
+# 设置环境变量
+ENV NODE_ENV=production
+ENV VERSION=1.0.0
+
 # 设置工作目录
 WORKDIR /app
 
@@ -12,9 +16,6 @@ RUN npm ci --only=production
 
 # 复制源代码
 COPY . .
-
-# 设置环境变量
-ENV NODE_ENV=production
 
 # 暴露端口
 EXPOSE 3000

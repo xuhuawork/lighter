@@ -71,13 +71,84 @@
     state: directory
     mode: '0755'
 
+- name: 确保 .dockerignore 文件包含正确的内容
+  copy:
+    dest: ~/Projects/lighter/.dockerignore
+    content: |
+      # 依赖目录
+      node_modules
+      npm-debug.log
+
+      # 版本控制
+      .git
+      .gitignore
+
+      # 环境配置
+      .env
+      .env.*
+
+      # 开发和测试文件
+      test
+      *.test.js
+      *.spec.js
+
+      # 日志文件
+      logs
+      *.log
+
+      # 系统文件
+      .DS_Store
+      Thumbs.db
+
+      # Nginx 和 Certbot 相关目录
+      nginx/certbot
+    mode: '0644'
+
+- name: 确保 nginx/certbot 目录结构存在
+  file:
+    path: "~/Projects/lighter/{{ item }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  with_items:
+    - "nginx/conf"
+    - "nginx/certbot/conf"
+    - "nginx/certbot/www"
+
+- name: 停止正在运行的 Docker Compose 服务
+  shell: cd ~/Projects/lighter && docker compose down
+  args:
+    chdir: ~/Projects/lighter
+  register: docker_compose_down
+  changed_when: docker_compose_down.rc == 0
+  failed_when: false
+
+- name: 移除 lighter-app 镜像
+  shell: docker rmi $(docker images -q lighter-app) || true
+  args:
+    chdir: ~/Projects/lighter
+  register: remove_image
+  changed_when: remove_image.rc == 0
+  failed_when: false
+
+- name: 重新构建 Docker 镜像
+  shell: cd ~/Projects/lighter && docker compose build --no-cache
+  args:
+    chdir: ~/Projects/lighter
+  register: docker_compose_build
+  retries: 2
+  delay: 3
+  until: docker_compose_build is success
+
 - name: 启动 Docker Compose 服务
   shell: cd ~/Projects/lighter && docker compose up -d
   args:
     chdir: ~/Projects/lighter
   register: docker_compose_up
-  retries: 3
-  delay: 10
+  retries: 2
+  delay: 3
   until: docker_compose_up is success
 
 - name: 检查服务状态
