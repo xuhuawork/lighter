@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "打火机追踪系统",
   "main": "app.js",
-  "scripts": {
-    "start": "node app.js"
-  },
   "dependencies": {
     "body-parser": "^1.20.3",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "mongoose": "^6.13.8"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs:follow": "docker-compose logs -f",
+    "docker:rebuild": "docker-compose down --rmi all && docker-compose pull && docker-compose up -d --build",
+    "docker:reset-db": "docker-compose down -v && docker-compose up -d",
+    "deploy": "cd ansible && ansible-playbook deploy.yml"
   }
 }

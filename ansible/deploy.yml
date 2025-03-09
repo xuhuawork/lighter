@@ -1,0 +1,7 @@
+---
+- name: 部署流浪火机应用
+  hosts: aws
+  gather_facts: yes
+  
+  roles:
+    - deploy 
